@@ -20,7 +20,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.authors.*') ? 'active' : '' --}}" href="#">
+                <a class="nav-link {{ Route::is('admin.authors.*') ? 'active' : ''}}" href="{{ route('admin.authors.index') }}">
                     <i class="bi bi-person-fill"></i> Pengarang
                 </a>
             </li>

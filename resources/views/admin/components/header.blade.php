@@ -12,7 +12,7 @@
                 <a class="nav-link dropdown-toggle px-3 text-white" href="#" role="button"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <i class="bi bi-person-circle me-1"></i>
-                    {{-- <span>{{ Auth::guard('admin')->user()->name ?? 'Admin' }}</span> --}}
+                    <span>{{ Auth::guard('admin')->user()->name ?? 'Admin' }}</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm mt-2">
                     <li>

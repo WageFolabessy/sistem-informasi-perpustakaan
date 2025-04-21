@@ -51,7 +51,6 @@ class CategoryController extends Controller
     {
         try {
             if ($category->books()->exists()) {
-                // Opsi 1: Larang hapus jika masih ada buku
                 return redirect()->route('admin.categories.index')
                     ->with('error', 'Gagal menghapus! Kategori masih digunakan oleh buku.');
             }

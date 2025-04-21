@@ -25,7 +25,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.publishers.*') ? 'active' : '' --}}" href="#">
+                <a class="nav-link {{ Route::is('admin.publishers.*') ? 'active' : '' }}" href="{{ route('admin.publishers.index') }}">
                     <i class="bi bi-building-fill"></i> Penerbit
                 </a>
             </li>

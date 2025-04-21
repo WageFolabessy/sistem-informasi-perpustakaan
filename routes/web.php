@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\PublisherController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -26,6 +27,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         // --- CRUD Master Data ---
         Route::resource('categories', CategoryController::class);
         Route::resource('authors', AuthorController::class);
-        // Route::resource('publishers', PublisherController::class);
+        Route::resource('publishers', PublisherController::class);
     });
 });

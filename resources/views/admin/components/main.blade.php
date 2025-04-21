@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,6 +17,7 @@
 
     @yield('css')
 </head>
+
 <body>
 
     @include('admin.components.header')
@@ -50,17 +52,6 @@
     <script src="{{ asset('assets/admin/vendor/datatables.min.js') }}"></script>
 
     @yield('script')
-
-    <script>
-        $(document).ready(function() {
-            $('.datatable').DataTable({
-                responsive: true,
-                language: {
-                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/id.json',
-                },
-            });
-        });
-    </script>
-
 </body>
+
 </html>

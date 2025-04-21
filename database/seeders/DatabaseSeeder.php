@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
 use App\Models\AdminUser;
+use App\Models\Category;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
@@ -14,7 +14,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        AdminUser::factory(1)->create();
+        Schema::disableForeignKeyConstraints();
 
+        AdminUser::truncate();
+        Category::truncate();
+
+        Schema::enableForeignKeyConstraints();
+
+        AdminUser::factory(1)->create();
+        $this->call([
+            CategorySeeder::class,
+        ]);
     }
 }

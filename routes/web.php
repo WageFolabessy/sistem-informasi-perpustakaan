@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\CategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -20,5 +21,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             ->name('logout');
 
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+        // --- CRUD Master Data ---
+        Route::resource('categories', CategoryController::class);
+        // Route::resource('authors', AuthorController::class);
+        // Route::resource('publishers', PublisherController::class);
     });
 });

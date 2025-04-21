@@ -58,7 +58,7 @@ class StoreBookRequest extends FormRequest
     protected function passedValidation(): void
     {
         $this->merge([
-            'slug' => Str::slug($this->input('name')),
+            'slug' => Str::slug($this->input('title')),
         ]);
     }
 }

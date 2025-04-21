@@ -38,6 +38,10 @@
                                     <td>{{ Str::limit($publisher->address, 70, '...') }}</td> {{-- Tingkatkan limit alamat --}}
                                     <td class="action-column text-center">
                                         <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ route('admin.publishers.show', $publisher) }}"
+                                                class="btn btn-info" title="Detail">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </a>
                                             <a href="{{ route('admin.publishers.edit', $publisher) }}"
                                                 class="btn btn-warning" title="Edit">
                                                 <i class="bi bi-pencil-fill"></i>

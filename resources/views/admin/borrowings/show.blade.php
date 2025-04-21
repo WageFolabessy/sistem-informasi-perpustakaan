@@ -54,7 +54,6 @@
                                     {{ $borrowing->fine->status->label() }}
                                 </span>
                                 @if ($borrowing->fine->status === App\Enum\FineStatus::Paid)
-                                    {{-- Sesuaikan Namespace Enum --}}
                                     <small class="d-block text-muted">Lunas pada
                                         {{ $borrowing->fine->payment_date?->isoFormat('D MMM YYYY, HH:mm') }}</small>
                                 @endif

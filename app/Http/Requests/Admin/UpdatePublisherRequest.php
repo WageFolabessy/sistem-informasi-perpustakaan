@@ -26,8 +26,8 @@ class UpdatePublisherRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Nama pengarang wajib diisi.',
-            'name.max' => 'Nama pengarang maksimal 100 karakter.',
+            'name.required' => 'Nama penerbit wajib diisi.',
+            'name.max' => 'Nama penerbit maksimal 100 karakter.',
         ];
     }
 }

@@ -26,7 +26,7 @@
         <div class="row">
 
             <nav class="col-lg-2 d-none d-lg-block sidebar-desktop">
-                <div class="sidebar-sticky mt-4">
+                <div class="sidebar-sticky">
                     @include('admin.components.sidebar-menu')
                 </div>
             </nav>

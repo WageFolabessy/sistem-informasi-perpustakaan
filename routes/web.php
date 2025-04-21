@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthorController;
+use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\PublisherController;
 use Illuminate\Support\Facades\Route;
@@ -28,5 +29,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('categories', CategoryController::class);
         Route::resource('authors', AuthorController::class);
         Route::resource('publishers', PublisherController::class);
+        Route::resource('books', BookController::class);
+        Route::post('books/{book}/copies', [BookController::class, 'storeCopy'])->name('books.copies.store');
+        Route::delete('book-copies/{copy}', [BookController::class, 'destroyCopy'])->name('book-copies.destroy');
+        Route::put('book-copies/{copy}', [BookController::class, 'updateCopy'])->name('book-copies.update');
     });
 });

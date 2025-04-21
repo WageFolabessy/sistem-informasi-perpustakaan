@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('synopsis')->nullable();
             $table->string('cover_image')->nullable();
             $table->string('location', 100)->nullable();
+            $table->string('slug')->unique();
             $table->timestamps();
         });
     }

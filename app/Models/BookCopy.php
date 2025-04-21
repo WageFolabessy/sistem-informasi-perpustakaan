@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use App\Enums\BookCopyStatus;
-use App\Enums\BookCondition;
+use App\Enum\BookCopyStatus;
+use App\Enum\BookCondition;
 
 class BookCopy extends Model
 {

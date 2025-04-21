@@ -1,6 +1,6 @@
 <ul class="nav flex-column sidebar-nav">
     <li class="nav-item">
-        <a class="nav-link {{-- Route::is('admin.dashboard') ? 'active' : '' --}}" href="#">
+        <a class="nav-link {{ Route::is('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
             <i class="bi bi-house-door-fill"></i>
             Dashboard
         </a>
@@ -10,23 +10,27 @@
         <h6 class="sidebar-heading px-3 mb-1 text-uppercase">Master Buku</h6>
         <ul class="nav flex-column nav-submenu">
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.books.*') ? 'active' : '' --}}" href="#">
-                    <i class="bi bi-book-half"></i> Manajemen Buku
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ Route::is('admin.categories.*') ? 'active' : '' }}" href="{{ route('admin.categories.index') }}">
+                <a class="nav-link {{ Route::is('admin.categories.*') ? 'active' : '' }}"
+                    href="{{ route('admin.categories.index') }}">
                     <i class="bi bi-tags-fill"></i> Kategori
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('admin.authors.*') ? 'active' : ''}}" href="{{ route('admin.authors.index') }}">
+                <a class="nav-link {{ Route::is('admin.authors.*') ? 'active' : '' }}"
+                    href="{{ route('admin.authors.index') }}">
                     <i class="bi bi-person-fill"></i> Pengarang
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('admin.publishers.*') ? 'active' : '' }}" href="{{ route('admin.publishers.index') }}">
+                <a class="nav-link {{ Route::is('admin.publishers.*') ? 'active' : '' }}"
+                    href="{{ route('admin.publishers.index') }}">
                     <i class="bi bi-building-fill"></i> Penerbit
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('admin.books.*') ? 'active' : '' }}"
+                    href="{{ route('admin.books.index') }}">
+                    <i class="bi bi-book-half"></i> Manajemen Buku
                 </a>
             </li>
         </ul>

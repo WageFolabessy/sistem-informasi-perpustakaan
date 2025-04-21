@@ -46,12 +46,6 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('admin.site-users.pending') ? 'active' : '' }}"
-                    href="{{ route('admin.site-users.pending') }}">
-                    <i class="bi bi-person-check-fill"></i> Aktivasi Siswa
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link {{ Route::is('admin.admin-users.*') ? 'active' : '' }}"
                     href="{{ route('admin.admin-users.index') }}">
                     <i class="bi bi-person-badge-fill"></i> Manajemen Admin
@@ -65,21 +59,15 @@
         <ul class="nav flex-column nav-submenu">
             {{-- Tambahkan link ke index --}}
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('admin.borrowings.index') ? 'active' : '' }}"
+                <a class="nav-link {{ Route::is('admin.borrowings.*') ? 'active' : '' }}"
                     href="{{ route('admin.borrowings.index') }}">
-                    <i class="bi bi-list-task"></i> Daftar Peminjaman
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link {{ Route::is('admin.borrowings.create') ? 'active' : '' }}"
-                    href="{{ route('admin.borrowings.create') }}">
-                    <i class="bi bi-arrow-up-right-square-fill"></i> Peminjaman Baru
+                    <i class="bi bi-arrow-up-right-square-fill"></i> Manajemen Peminjaman Buku
                 </a>
             </li>
             {{-- Link lain (Pengembalian, Booking, Overdue, dll.) --}}
             <li class="nav-item">
                 <a class="nav-link {{-- Route::is('admin.returns.create') ? 'active' : '' --}}" href="#">
-                    <i class="bi bi-arrow-down-left-square-fill"></i> Pengembalian Buku
+                    <i class="bi bi-arrow-down-left-square-fill"></i> Manajemen Pengembalian Buku
                 </a>
             </li>
             <li class="nav-item">

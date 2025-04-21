@@ -8,7 +8,7 @@
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">Riwayat Peminjaman Buku</h6>
             <a href="{{ route('admin.borrowings.create') }}" class="btn btn-primary btn-sm">
-                <i class="bi bi-plus-lg me-1"></i> Catat Peminjaman Baru
+                <i class="bi bi-plus-lg me-1"></i> Peminjaman Baru
             </a>
         </div>
         <div class="card-body">

@@ -74,7 +74,7 @@
 
 
                 <div class="d-flex justify-content-end mt-3">
-                    <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary me-2">Batal</a>
+                    <a href="{{ route('admin.borrowings.index') }}" class="btn btn-secondary me-2">Batal</a>
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-save-fill me-1"></i> Catat Peminjaman
                     </button>

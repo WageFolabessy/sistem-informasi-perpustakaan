@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\PublisherController;
 use App\Http\Controllers\Admin\SiteUserController;
 use Illuminate\Support\Facades\Route;
@@ -40,5 +42,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('site-users/{siteUser}/activate', [SiteUserController::class, 'activate'])->name('site-users.activate');
         Route::delete('site-users/{siteUser}/reject', [SiteUserController::class, 'reject'])->name('site-users.reject');
         Route::resource('site-users', SiteUserController::class);
+
+        // --- Manajemen Admin ---
+        Route::resource('admin-users', AdminUserController::class)->except(['show']);
+        
+        // --- Profil Admin ---
+        Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
     });
 });

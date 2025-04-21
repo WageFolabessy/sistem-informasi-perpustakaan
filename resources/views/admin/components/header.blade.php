@@ -16,7 +16,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm mt-2">
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="#">
+                        <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.profile.edit') }}">
                             <i class="bi bi-person-fill me-2"></i>
                             Profil Saya
                         </a>

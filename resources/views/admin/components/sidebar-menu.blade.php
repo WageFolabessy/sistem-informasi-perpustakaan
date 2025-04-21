@@ -52,7 +52,7 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.admin-users.*') ? 'active' : '' --}}" href="#">
+                <a class="nav-link {{ Route::is('admin.admin-users.*') ? 'active' : '' }}" href="{{ route('admin.admin-users.index') }}">
                     <i class="bi bi-person-badge-fill"></i> Manajemen Admin
                 </a>
             </li>

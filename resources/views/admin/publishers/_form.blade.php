@@ -9,8 +9,7 @@
 </div>
 <div class="mb-3">
     <label for="address" class="form-label">Alamat (Opsional)</label>
-    <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address"
-        rows="3">{{ old('address', $publisher->address ?? '') }}</textarea>
+    <textarea class="form-control @error('address') is-invalid @enderror" id="address" name="address" rows="3">{{ old('address', $publisher->address ?? '') }}</textarea>
     @error('address')
         <div class="invalid-feedback">{{ $message }}</div>
     @enderror

@@ -10,17 +10,9 @@
                 <h6 class="m-0 font-weight-bold text-primary">Formulir Tambah Buku</h6>
             </div>
             <div class="card-body">
-                @if ($errors->any())
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>Gagal menyimpan data!</strong> Mohon periksa kembali isian Anda:
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                @endif
+                @include('admin.components.flash_messages')
+                @include('admin.components.validation_errors')
+
                 @include('admin.books._form')
 
                 <hr>
@@ -72,21 +64,19 @@
         function previewImage() {
             const image = document.querySelector('#cover_image');
             const imgPreview = document.querySelector('#image-preview');
-            imgPreview.style.display = 'block';
-            const oFReader = new FileReader();
-            oFReader.readAsDataURL(image.files[0]);
-            oFReader.onload = function(oFREvent) {
-                imgPreview.src = oFREvent.target.result;
-            }
-        }
-        // Set initial display based on old input or existing image
-        document.addEventListener('DOMContentLoaded', function() {
-            const imgPreview = document.querySelector('#image-preview');
-            if (imgPreview.getAttribute('src') !== "{{ asset('assets/images/no-image.jpg') }}") {
+            const defaultImage = "{{ asset('assets/images/no-image.png') }}";
+
+            if (image.files && image.files[0]) {
                 imgPreview.style.display = 'block';
+                const oFReader = new FileReader();
+                oFReader.readAsDataURL(image.files[0]);
+                oFReader.onload = function(oFREvent) {
+                    imgPreview.src = oFREvent.target.result;
+                }
             } else {
+                imgPreview.src = '#'; // Reset src
                 imgPreview.style.display = 'none';
             }
-        });
+        }
     </script>
 @endsection

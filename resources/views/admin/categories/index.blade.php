@@ -12,18 +12,7 @@
             </a>
         </div>
         <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+            @include('admin.components.flash_messages')
 
             @if ($categories->isEmpty())
                 <div class="alert alert-info text-center">
@@ -31,26 +20,26 @@
                 </div>
             @else
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover datatable" id="dataTableCategories" width="100%"
-                        cellspacing="0">
-                        <thead>
+                    <table class="table table-bordered table-hover table-striped datatable" id="dataTableCategories"
+                        width="100%" cellspacing="0">
+                        <thead class="table-light">
                             <tr>
-                                <th>No</th>
+                                <th class="text-center no-sort" width="1%">No</th>
                                 <th>Nama Kategori</th>
                                 <th>Slug</th>
                                 <th>Deskripsi</th>
-                                <th>Aksi</th>
+                                <th class="text-center action-column no-sort">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($categories as $category)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                <tr class="align-middle">
+                                    <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $category->name }}</td>
                                     <td>{{ $category->slug }}</td>
                                     <td>{{ Str::limit($category->description, 50, '...') }}</td>
-                                    <td class="action-column">
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="Aksi Buku">
+                                    <td class="action-column text-center">
+                                        <div class="btn-group btn-group-sm" role="group">
                                             <a href="{{ route('admin.categories.show', $category) }}" class="btn btn-info"
                                                 title="Detail">
                                                 <i class="bi bi-eye-fill"></i>
@@ -70,6 +59,7 @@
                         </tbody>
                     </table>
                 </div>
+
                 @foreach ($categories as $category)
                     <div class="modal fade" id="deleteModal-{{ $category->id }}" tabindex="-1"
                         aria-labelledby="deleteModalLabel-{{ $category->id }}" aria-hidden="true">
@@ -108,26 +98,15 @@
         .action-column {
             white-space: nowrap;
             width: 1%;
-            text-align: center;
+            text-align: center
         }
 
         .action-column .btn .bi {
-            vertical-align: middle;
+            vertical-align: middle
         }
     </style>
 @endsection
 
 @section('script')
-    <script>
-        $(document).ready(function() {
-            var table = $('#dataTableCategories');
-            if (table.length) {
-                table.DataTable({
-                    paging: true,
-                    searching: true,
-                    responsive: true,
-                });
-            }
-        });
-    </script>
+    @include('admin.components.datatable_script', ['table_id' => 'dataTableCategories'])
 @endsection

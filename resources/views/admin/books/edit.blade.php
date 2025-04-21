@@ -11,6 +11,9 @@
                 <h6 class="m-0 font-weight-bold text-primary">Formulir Edit Buku</h6>
             </div>
             <div class="card-body">
+                @include('admin.components.flash_messages')
+                @include('admin.components.validation_errors')
+
                 @include('admin.books._form', ['book' => $book])
             </div>
             <div class="card-footer d-flex justify-content-end">
@@ -41,25 +44,27 @@
                 </div>
             @endif
             @if ($errors->storeCopy->any())
-                <div class="alert alert-danger">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <h6 class="alert-heading">Gagal Menambahkan Eksemplar:</h6>
                     <ul>
                         @foreach ($errors->storeCopy->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
                     </ul>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             @endif
             @php $editErrorFound = false; @endphp
             @foreach ($book->copies as $copy)
                 @if ($errors->{'updateCopy_' . $copy->id}->any() && !$editErrorFound)
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
                         <h6 class="alert-heading">Gagal Memperbarui Eksemplar ({{ $copy->copy_code }}):</h6>
                         <ul>
                             @foreach ($errors->{'updateCopy_' . $copy->id}->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
                         </ul>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     @php $editErrorFound = true; @endphp
                 @endif
@@ -79,35 +84,36 @@
                                 <th>Status</th>
                                 <th>Kondisi</th>
                                 <th>Ditambahkan</th>
-                                <th>Aksi</th>
+                                <th class="action-column">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($book->copies as $copy)
-                                <tr>
+                                <tr class="align-middle">
                                     <td>{{ $copy->copy_code }}</td>
-                                    <td>
+                                    <td class="text-center">
                                         <span class="badge bg-{{ $copy->status->badgeColor() }}">
                                             {{ $copy->status->label() }}
                                         </span>
                                     </td>
-                                    <td>
+                                    <td class="text-center">
                                         <span class="badge bg-{{ $copy->condition->badgeColor() }}">
                                             {{ $copy->condition->label() }}
                                         </span>
                                     </td>
                                     <td>{{ $copy->created_at ? $copy->created_at->diffForHumans() : '-' }}</td>
-                                    <td>
-                                        <button type="button" class="btn btn-outline-warning btn-sm py-0 px-1 me-1"
-                                            title="Edit Eksemplar" data-bs-toggle="modal"
-                                            data-bs-target="#editCopyModal-{{ $copy->id }}">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-outline-danger btn-sm py-0 px-1"
-                                            title="Hapus Eksemplar" data-bs-toggle="modal"
-                                            data-bs-target="#deleteCopyModal-{{ $copy->id }}">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
+                                    <td class="action-column">
+                                        <div class="btn-group btn-group-sm">
+                                            <button type="button" class="btn btn-outline-warning" title="Edit Eksemplar"
+                                                data-bs-toggle="modal" data-bs-target="#editCopyModal-{{ $copy->id }}">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </button>
+                                            <button type="button" class="btn btn-outline-danger" title="Hapus Eksemplar"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#deleteCopyModal-{{ $copy->id }}">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -140,8 +146,8 @@
                         </div>
                         <div class="mb-3">
                             <label for="condition" class="form-label">Kondisi Awal</label>
-                            <select class="form-select @error('condition', 'storeCopy') is-invalid @enderror" id="condition"
-                                name="condition">
+                            <select class="form-select @error('condition', 'storeCopy') is-invalid @enderror"
+                                id="condition" name="condition">
                                 @foreach ($conditions as $conditionEnum)
                                     <option value="{{ $conditionEnum->value }}"
                                         {{ old('condition') == $conditionEnum->value || $conditionEnum === App\Enum\BookCondition::Good ? 'selected' : '' }}>
@@ -163,9 +169,7 @@
         </div>
     </div>
 
-    {{-- Modal Edit & Hapus Eksemplar --}}
     @foreach ($book->copies as $copy)
-        {{-- Modal Edit Eksemplar --}}
         <div class="modal fade" id="editCopyModal-{{ $copy->id }}" tabindex="-1"
             aria-labelledby="editCopyModalLabel-{{ $copy->id }}" aria-hidden="true">
             <div class="modal-dialog">
@@ -228,7 +232,6 @@
             </div>
         </div>
 
-        {{-- Modal Hapus Eksemplar --}}
         <div class="modal fade" id="deleteCopyModal-{{ $copy->id }}" tabindex="-1"
             aria-labelledby="deleteCopyModalLabel-{{ $copy->id }}" aria-hidden="true">
             <div class="modal-dialog">
@@ -262,6 +265,34 @@
 
 @section('script')
     <script>
+        function previewImage() {
+            const image = document.querySelector('#cover_image');
+            const imgPreview = document.querySelector('#image-preview');
+            const defaultImage = "{{ asset('assets/images/no-image.png') }}";
+
+            if (image.files && image.files[0]) {
+                imgPreview.style.display = 'block';
+                const oFReader = new FileReader();
+                oFReader.readAsDataURL(image.files[0]);
+                oFReader.onload = function(oFREvent) {
+                    imgPreview.src = oFREvent.target.result;
+                }
+            } else {
+                const currentImage =
+                    "{{ isset($book) && $book->cover_image ? asset('storage/' . $book->cover_image) : '' }}";
+                if (currentImage) {
+                    imgPreview.src = currentImage;
+                    imgPreview.style.display = 'block';
+                } else {
+                    imgPreview.src = '#'; // Reset src
+                    imgPreview.style.display = 'none';
+                }
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            previewImage();
+        });
+
         $(document).ready(function() {
             @if ($errors->hasBag('storeCopy'))
                 var addModal = new bootstrap.Modal(document.getElementById('addCopyModal'));
@@ -280,29 +311,6 @@
                     @break
                 @endif
             @endforeach
-        });
-
-        function previewImage() {
-            const image = document.querySelector('#cover_image');
-            const imgPreview = document.querySelector('#image-preview');
-            const defaultImage = "{{ asset('assets/images/no-image.jpg') }}";
-
-            if (image.files && image.files[0]) {
-                imgPreview.style.display = 'block';
-                const oFReader = new FileReader();
-                oFReader.readAsDataURL(image.files[0]);
-                oFReader.onload = function(oFREvent) {
-                    imgPreview.src = oFREvent.target.result;
-                }
-            } else {
-                const currentImage =
-                    "{{ isset($book) && asset('/storage/' . $book->cover_image) ? asset('/storage/' . $book->cover_image) : '' }}";
-                imgPreview.src = currentImage || defaultImage;
-                imgPreview.style.display = currentImage ? 'block' : 'none';
-            }
-        }
-        document.addEventListener('DOMContentLoaded', function() {
-            previewImage();
         });
     </script>
 @endsection

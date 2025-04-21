@@ -22,7 +22,6 @@ class SiteUser extends Authenticatable
         'major',
         'phone_number',
         'fcm_token',
-        'is_active',
     ];
 
     protected $hidden = [

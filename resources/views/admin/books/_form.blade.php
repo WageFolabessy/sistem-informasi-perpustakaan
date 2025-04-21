@@ -106,11 +106,14 @@
             @error('cover_image')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
-            <img id="image-preview"
-                src="{{ isset($book) && asset( '/storage/' . $book->cover_image) ? asset( '/storage/' . $book->cover_image) : asset('assets/images/no-image.jpg') }}"
-                alt="Image Preview" class="img-thumbnail mt-2"
-                style="max-height: 200px; display: {{ isset($book) && asset( '/storage/' . $book->cover_image) ? 'block' : 'none' }};">
-            <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah gambar.</small>
+            @if (isset($book) && $book->cover_image)
+                <img id="image-preview" src="{{ asset('storage/' . $book->cover_image) }}" alt="Current Cover"
+                    class="img-thumbnail mt-2" style="max-height: 200px;">
+            @else
+                <img id="image-preview" src="#" alt="Image Preview" class="img-thumbnail mt-2"
+                    style="max-height: 200px; display: none;">
+            @endif
+            <small class="form-text text-muted">Kosongkan jika tidak ingin mengubah gambar (saat edit).</small>
         </div>
     </div>
 </div>

@@ -12,18 +12,7 @@
             </a>
         </div>
         <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+            @include('admin.components.flash_messages')
 
             @if ($authors->isEmpty())
                 <div class="alert alert-info text-center">
@@ -31,24 +20,24 @@
                 </div>
             @else
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover datatable" id="dataTableAuthors" width="100%"
-                        cellspacing="0">
-                        <thead>
+                    <table class="table table-bordered table-hover table-striped datatable" id="dataTableAuthors"
+                        width="100%" cellspacing="0">
+                        <thead class="table-light">
                             <tr>
-                                <th>No</th>
+                                <th class="text-center">No</th>
                                 <th>Nama Pengarang</th>
                                 <th>Bio</th>
-                                <th>Aksi</th>
+                                <th class="text-center action-column no-sort">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($authors as $author)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                <tr class="align-middle">
+                                    <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $author->name }}</td>
-                                    <td>{{ Str::limit($author->bio, 50, '...') }}</td>
+                                    <td>{{ Str::limit($author->bio, 70, '...') }}</td>
                                     <td class="action-column">
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="Aksi Buku">
+                                        <div class="btn-group btn-group-sm" role="group">
                                             <a href="{{ route('admin.authors.show', $author) }}" class="btn btn-info"
                                                 title="Detail">
                                                 <i class="bi bi-eye-fill"></i>
@@ -68,6 +57,8 @@
                         </tbody>
                     </table>
                 </div>
+
+                {{-- Modal Hapus --}}
                 @foreach ($authors as $author)
                     <div class="modal fade" id="deleteModal-{{ $author->id }}" tabindex="-1"
                         aria-labelledby="deleteModalLabel-{{ $author->id }}" aria-hidden="true">
@@ -102,30 +93,8 @@
 @endsection
 
 @section('css')
-    <style>
-        .action-column {
-            white-space: nowrap;
-            width: 1%;
-            text-align: center;
-        }
-
-        .action-column .btn .bi {
-            vertical-align: middle;
-        }
-    </style>
 @endsection
 
 @section('script')
-    <script>
-        $(document).ready(function() {
-            var table = $('#dataTableAuthors');
-            if (table.length) {
-                table.DataTable({
-                    paging: true,
-                    searching: true,
-                    responsive: true,
-                });
-            }
-        });
-    </script>
+    @include('admin.components.datatable_script', ['table_id' => 'dataTableAuthors'])
 @endsection

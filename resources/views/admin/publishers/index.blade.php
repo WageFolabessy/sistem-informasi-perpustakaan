@@ -12,18 +12,7 @@
             </a>
         </div>
         <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+            @include('admin.components.flash_messages')
 
             @if ($publishers->isEmpty())
                 <div class="alert alert-info text-center">
@@ -31,28 +20,24 @@
                 </div>
             @else
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover datatable" id="dataTablePublishers" width="100%"
-                        cellspacing="0">
-                        <thead>
+                    <table class="table table-bordered table-hover table-striped datatable" id="dataTablePublishers"
+                        width="100%" cellspacing="0">
+                        <thead class="table-light">
                             <tr>
-                                <th>No</th>
+                                <th class="text-center no-sort" width="1%">No</th>
                                 <th>Nama Penerbit</th>
                                 <th>Alamat</th>
-                                <th>Aksi</th>
+                                <th class="text-center action-column no-sort">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($publishers as $publisher)
-                                <tr>
-                                    <td>{{ $loop->iteration }}</td>
+                                <tr class="align-middle">
+                                    <td class="text-center">{{ $loop->iteration }}</td>
                                     <td>{{ $publisher->name }}</td>
-                                    <td>{{ Str::limit($publisher->address, 50, '...') }}</td>
-                                    <td class="action-column">
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="Aksi Buku">
-                                            <a href="{{ route('admin.publishers.show', $publisher) }}" class="btn btn-info"
-                                                title="Detail">
-                                                <i class="bi bi-eye-fill"></i>
-                                            </a>
+                                    <td>{{ Str::limit($publisher->address, 70, '...') }}</td> {{-- Tingkatkan limit alamat --}}
+                                    <td class="action-column text-center">
+                                        <div class="btn-group btn-group-sm" role="group">
                                             <a href="{{ route('admin.publishers.edit', $publisher) }}"
                                                 class="btn btn-warning" title="Edit">
                                                 <i class="bi bi-pencil-fill"></i>
@@ -68,14 +53,14 @@
                         </tbody>
                     </table>
                 </div>
+
                 @foreach ($publishers as $publisher)
                     <div class="modal fade" id="deleteModal-{{ $publisher->id }}" tabindex="-1"
                         aria-labelledby="deleteModalLabel-{{ $publisher->id }}" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="deleteModalLabel-{{ $publisher->id }}">Konfirmasi
-                                        Hapus
+                                    <h1 class="modal-title fs-5" id="deleteModalLabel-{{ $publisher->id }}">Konfirmasi Hapus
                                     </h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
@@ -107,26 +92,15 @@
         .action-column {
             white-space: nowrap;
             width: 1%;
-            text-align: center;
+            text-align: center
         }
 
         .action-column .btn .bi {
-            vertical-align: middle;
+            vertical-align: middle
         }
     </style>
 @endsection
 
 @section('script')
-    <script>
-        $(document).ready(function() {
-            var table = $('#dataTablePublishers');
-            if (table.length) {
-                table.DataTable({
-                    paging: true,
-                    searching: true,
-                    responsive: true,
-                });
-            }
-        });
-    </script>
+    @include('admin.components.datatable_script', ['table_id' => 'dataTablePublishers'])
 @endsection

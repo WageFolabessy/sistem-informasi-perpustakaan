@@ -9,10 +9,19 @@
             <h6 class="m-0 font-weight-bold text-primary">Formulir Edit Kategori</h6>
         </div>
         <div class="card-body">
-            <form action="{{ route('admin.categories.update', $category->id) }}" method="POST">
+            @include('admin.components.flash_messages')
+            @include('admin.components.validation_errors')
+
+            <form action="{{ route('admin.categories.update', $category) }}" method="POST">
                 @method('PUT')
                 @include('admin.categories._form', ['category' => $category])
             </form>
         </div>
     </div>
+@endsection
+
+@section('css')
+@endsection
+
+@section('script')
 @endsection

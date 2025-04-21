@@ -40,12 +40,14 @@
         <h6 class="sidebar-heading px-3 mb-1 text-uppercase">Pengguna</h6>
         <ul class="nav flex-column nav-submenu">
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.site-users.*') ? 'active' : '' --}}" href="#">
+                <a class="nav-link {{ Route::is(['admin.site-users.index', 'admin.site-users.create', 'admin.site-users.edit', 'admin.site-users.show']) ? 'active' : '' }}"
+                    href="{{ route('admin.site-users.index') }}">
                     <i class="bi bi-people-fill"></i> Manajemen Siswa
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.users.pending') ? 'active' : '' --}}" href="#">
+                <a class="nav-link {{ Route::is('admin.site-users.pending') ? 'active' : '' }}"
+                    href="{{ route('admin.site-users.pending') }}">
                     <i class="bi bi-person-check-fill"></i> Aktivasi Siswa
                 </a>
             </li>

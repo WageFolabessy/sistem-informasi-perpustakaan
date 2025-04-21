@@ -12,18 +12,7 @@
             </a>
         </div>
         <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            @endif
+            @include('admin.components.flash_messages')
 
             @if ($books->isEmpty())
                 <div class="alert alert-info text-center">
@@ -35,15 +24,15 @@
                         width="100%" cellspacing="0">
                         <thead class="table-light">
                             <tr>
-                                <th class="text-center">No</th>
-                                <th class="text-center">Sampul</th>
+                                <th class="text-center no-sort" width="1%">No</th>
+                                <th class="text-center no-sort">Sampul</th>
                                 <th>Judul</th>
                                 <th>Pengarang</th>
                                 <th>Kategori</th>
                                 <th>ISBN</th>
                                 <th>Lokasi</th>
                                 <th class="text-center">Jml Eksemplar</th>
-                                <th class="text-center action-column">Aksi</th>
+                                <th class="text-center action-column no-sort">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -65,8 +54,8 @@
                                     <td>{{ $book->isbn ?: '-' }}</td>
                                     <td>{{ $book->location ?: '-' }}</td>
                                     <td class="text-center">{{ $book->copies_count }}</td>
-                                    <td class="action-column">
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="Aksi Buku">
+                                    <td class="action-column text-center">
+                                        <div class="btn-group btn-group-sm" role="group">
                                             <a href="{{ route('admin.books.show', $book) }}" class="btn btn-info"
                                                 title="Detail">
                                                 <i class="bi bi-eye-fill"></i>
@@ -128,54 +117,26 @@
             overflow: hidden;
             text-overflow: ellipsis;
             display: inline-block;
-            vertical-align: middle;
+            vertical-align: middle
         }
 
         .action-column {
             white-space: nowrap;
             width: 1%;
-            text-align: center;
+            text-align: center
         }
 
         .action-column .btn .bi {
-            vertical-align: middle;
+            vertical-align: middle
         }
 
         td img {
             display: block;
-            margin: auto;
+            margin: auto
         }
     </style>
 @endsection
 
 @section('script')
-    <script>
-        $(document).ready(function() {
-            var table = $('#dataTableBooks');
-            if (table.length) {
-                table.DataTable({
-                    paging: true,
-                    searching: true,
-                    lengthChange: true,
-                    info: true,
-                    responsive: true,
-                    language: {
-                        emptyTable: "Belum ada data buku."
-                    },
-                    columnDefs: [{
-                        targets: [1, 8],
-                        orderable: false,
-                        searchable: false
-                    }, {
-                        targets: [7],
-                        className: 'text-center'
-                    }, {
-                        targets: [0],
-                        className: 'text-center',
-                        width: '1%'
-                    }]
-                });
-            }
-        });
-    </script>
+    @include('admin.components.datatable_script', ['table_id' => 'dataTableBooks'])
 @endsection

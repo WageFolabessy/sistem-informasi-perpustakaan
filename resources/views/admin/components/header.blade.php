@@ -1,7 +1,7 @@
 <header class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top p-0 shadow admin-header">
     <div class="container-fluid">
 
-        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="{{ route('admin.dashboard') }}">
             <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" width="30" height="30"
                 class="d-inline-block align-text-top me-2">
             SIMPUS Admin

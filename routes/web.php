@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Admin\BorrowingController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\PublisherController;
@@ -45,9 +46,18 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // --- Manajemen Admin ---
         Route::resource('admin-users', AdminUserController::class)->except(['show']);
-        
+
         // --- Profil Admin ---
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
+
+        // --- Sirkulasi (Peminjaman) ---
+        Route::resource('borrowings', BorrowingController::class)->only([
+            'index',
+            'create',
+            'store',
+            'show',
+            'destroy'
+        ]);
     });
 });

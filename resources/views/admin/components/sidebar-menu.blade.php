@@ -52,7 +52,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('admin.admin-users.*') ? 'active' : '' }}" href="{{ route('admin.admin-users.index') }}">
+                <a class="nav-link {{ Route::is('admin.admin-users.*') ? 'active' : '' }}"
+                    href="{{ route('admin.admin-users.index') }}">
                     <i class="bi bi-person-badge-fill"></i> Manajemen Admin
                 </a>
             </li>
@@ -62,11 +63,20 @@
     <li class="nav-item mt-2">
         <h6 class="sidebar-heading px-3 mb-1 text-uppercase">Sirkulasi</h6>
         <ul class="nav flex-column nav-submenu">
+            {{-- Tambahkan link ke index --}}
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.borrowings.create') ? 'active' : '' --}}" href="#">
+                <a class="nav-link {{ Route::is('admin.borrowings.index') ? 'active' : '' }}"
+                    href="{{ route('admin.borrowings.index') }}">
+                    <i class="bi bi-list-task"></i> Daftar Peminjaman
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ Route::is('admin.borrowings.create') ? 'active' : '' }}"
+                    href="{{ route('admin.borrowings.create') }}">
                     <i class="bi bi-arrow-up-right-square-fill"></i> Peminjaman Baru
                 </a>
             </li>
+            {{-- Link lain (Pengembalian, Booking, Overdue, dll.) --}}
             <li class="nav-item">
                 <a class="nav-link {{-- Route::is('admin.returns.create') ? 'active' : '' --}}" href="#">
                     <i class="bi bi-arrow-down-left-square-fill"></i> Pengembalian Buku

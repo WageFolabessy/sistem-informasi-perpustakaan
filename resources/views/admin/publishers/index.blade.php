@@ -47,19 +47,21 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $publisher->name }}</td>
                                     <td>{{ Str::limit($publisher->address, 50, '...') }}</td>
-                                    <td>
-                                        <a href="{{ route('admin.publishers.show', $publisher) }}"
-                                            class="btn btn-info btn-sm me-1" title="Detail">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </a>
-                                        <a href="{{ route('admin.publishers.edit', $publisher) }}"
-                                            class="btn btn-warning btn-sm me-1" title="Edit">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-danger btn-sm" title="Hapus"
-                                            data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $publisher->id }}">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
+                                    <td class="action-column">
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Aksi Buku">
+                                            <a href="{{ route('admin.publishers.show', $publisher) }}" class="btn btn-info"
+                                                title="Detail">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </a>
+                                            <a href="{{ route('admin.publishers.edit', $publisher) }}"
+                                                class="btn btn-warning" title="Edit">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-danger" title="Hapus"
+                                                data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $publisher->id }}">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -72,7 +74,8 @@
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="deleteModalLabel-{{ $publisher->id }}">Konfirmasi Hapus
+                                    <h1 class="modal-title fs-5" id="deleteModalLabel-{{ $publisher->id }}">Konfirmasi
+                                        Hapus
                                     </h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"
                                         aria-label="Close"></button>
@@ -100,6 +103,17 @@
 @endsection
 
 @section('css')
+    <style>
+        .action-column {
+            white-space: nowrap;
+            width: 1%;
+            text-align: center;
+        }
+
+        .action-column .btn .bi {
+            vertical-align: middle;
+        }
+    </style>
 @endsection
 
 @section('script')

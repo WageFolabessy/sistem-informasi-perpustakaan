@@ -49,19 +49,21 @@
                                     <td>{{ $category->name }}</td>
                                     <td>{{ $category->slug }}</td>
                                     <td>{{ Str::limit($category->description, 50, '...') }}</td>
-                                    <td>
-                                        <a href="{{ route('admin.categories.show', $category) }}"
-                                            class="btn btn-info btn-sm me-1" title="Detail">
-                                            <i class="bi bi-eye-fill"></i>
-                                        </a>
-                                        <a href="{{ route('admin.categories.edit', $category) }}"
-                                            class="btn btn-warning btn-sm me-1" title="Edit">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </a>
-                                        <button type="button" class="btn btn-danger btn-sm" title="Hapus"
-                                            data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $category->id }}">
-                                            <i class="bi bi-trash-fill"></i>
-                                        </button>
+                                    <td class="action-column">
+                                        <div class="btn-group btn-group-sm" role="group" aria-label="Aksi Buku">
+                                            <a href="{{ route('admin.categories.show', $category) }}" class="btn btn-info"
+                                                title="Detail">
+                                                <i class="bi bi-eye-fill"></i>
+                                            </a>
+                                            <a href="{{ route('admin.categories.edit', $category) }}"
+                                                class="btn btn-warning" title="Edit">
+                                                <i class="bi bi-pencil-fill"></i>
+                                            </a>
+                                            <button type="button" class="btn btn-danger" title="Hapus"
+                                                data-bs-toggle="modal" data-bs-target="#deleteModal-{{ $category->id }}">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             @endforeach
@@ -102,6 +104,17 @@
 @endsection
 
 @section('css')
+    <style>
+        .action-column {
+            white-space: nowrap;
+            width: 1%;
+            text-align: center;
+        }
+
+        .action-column .btn .bi {
+            vertical-align: middle;
+        }
+    </style>
 @endsection
 
 @section('script')

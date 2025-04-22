@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             PublisherSeeder::class,
             BookSeeder::class,
             SettingSeeder::class,
+            BookingSeeder::class,
         ]);
     }
 }

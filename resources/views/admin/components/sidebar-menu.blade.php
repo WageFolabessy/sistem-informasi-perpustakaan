@@ -64,7 +64,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Route::is('admin.bookings.*') ? 'active' : '' }}"
+                    href="{{ route('admin.bookings.index') }}">
                     <i class="bi bi-journal-bookmark-fill"></i> Manajemen Booking
                 </a>
             </li>

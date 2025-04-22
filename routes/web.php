@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\BorrowingController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FineController;
@@ -62,6 +63,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
             'destroy'
         ]);
         Route::patch('borrowings/{borrowing}/return', [BorrowingController::class, 'processReturn'])->name('borrowings.return');
+
+        // --- Manajemen Booking ---
+        Route::get('bookings', [BookingController::class, 'index'])->name('bookings.index');
+        Route::get('bookings/{booking}', [BookingController::class, 'show'])->name('bookings.show');
+        Route::patch('bookings/{booking}/cancel', [BookingController::class, 'cancel'])->name('bookings.cancel');
+        Route::post('bookings/{booking}/convert', [BookingController::class, 'convert'])->name('bookings.convert');
 
         // --- Manajemen Denda ---
         Route::get('fines', [FineController::class, 'index'])->name('fines.index');

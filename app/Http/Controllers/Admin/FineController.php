@@ -82,7 +82,7 @@ class FineController extends Controller
         }
     }
 
-    public function waive(WaiveFineRequest $request, Fine $fine): RedirectResponse // Ganti Request
+    public function waive(WaiveFineRequest $request, Fine $fine): RedirectResponse
     {
         $validated = $request->validated();
         $waiverNotes = $validated['waiver_notes'] ?? null;

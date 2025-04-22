@@ -221,4 +221,31 @@ class BorrowingController extends Controller
                 ->with('error', 'Gagal memproses pengembalian: Terjadi kesalahan sistem.');
         }
     }
+
+    public function overdueIndex(): View
+    {
+        $today = Carbon::today();
+
+        $overdueBorrowings = Borrowing::with([
+            'siteUser:id,nis,name',
+            'bookCopy:id,copy_code,book_id',
+            'bookCopy.book:id,title',
+        ])
+            ->where(function ($query) use ($today) {
+                $query->where('status', BorrowingStatus::Overdue)
+                    ->orWhere(function ($subQuery) use ($today) {
+                        $subQuery->where('status', BorrowingStatus::Borrowed)
+                            ->whereDate('due_date', '<', $today);
+                    });
+            })
+            ->orderBy('due_date', 'asc')
+            ->get();
+
+        foreach ($overdueBorrowings as $borrowing) {
+            $dueDate = Carbon::parse($borrowing->due_date)->startOfDay();
+            $borrowing->days_overdue = $today->diffInDays($dueDate, true);
+        }
+
+        return view('admin.borrowings.overdue', compact('overdueBorrowings'));
+    }
 }

@@ -53,6 +53,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
 
         // --- Manajemen Sirkulasi ---
+        Route::get('borrowings/overdue', [BorrowingController::class, 'overdueIndex'])->name('borrowings.overdue');
         Route::resource('borrowings', BorrowingController::class)->only([
             'index',
             'create',

@@ -58,7 +58,7 @@
         <h6 class="sidebar-heading px-3 mb-1 text-uppercase">Sirkulasi</h6>
         <ul class="nav flex-column nav-submenu">
             <li class="nav-item">
-                <a class="nav-link {{ Route::is('admin.borrowings.*') ? 'active' : '' }}"
+                <a class="nav-link {{ Route::is('admin.borrowings.*') && !Route::is('admin.borrowings.overdue') ? 'active' : '' }}"
                     href="{{ route('admin.borrowings.index') }}">
                     <i class="bi bi-arrow-repeat"></i> Manajemen Sirkulasi
                 </a>
@@ -69,7 +69,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Route::is('admin.borrowings.overdue') ? 'active' : '' }}"
+                    href="{{ route('admin.borrowings.overdue') }}">
                     <i class="bi bi-calendar-x-fill"></i> Buku Lewat Tempo
                 </a>
             </li>

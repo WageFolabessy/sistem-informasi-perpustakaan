@@ -23,6 +23,7 @@ class UpdateSettingsRequest extends FormRequest
             'settings.library_name' => ['required', 'string', 'max:255'],
             'settings.library_address' => ['nullable', 'string'],
             'settings.max_fine_amount' => ['required', 'integer', 'min:0'],
+            'settings.lost_book_fee' => ['required', 'integer', 'min:0'],
             'settings.*' => ['nullable', 'string'],
         ];
     }
@@ -55,6 +56,10 @@ class UpdateSettingsRequest extends FormRequest
             'settings.max_fine_amount.required' => 'Batas Maksimal Denda wajib diisi.',
             'settings.max_fine_amount.integer' => 'Batas Maksimal Denda harus angka.',
             'settings.max_fine_amount.min' => 'Batas Maksimal Denda tidak boleh negatif (isi 0 jika tanpa batas).',
+
+            'settings.lost_book_fee.required' => 'Biaya Buku Hilang wajib diisi.',
+            'settings.lost_book_fee.integer' => 'Biaya Buku Hilang harus angka.',
+            'settings.lost_book_fee.min' => 'Biaya Buku Hilang tidak boleh negatif.',
         ];
     }
 }

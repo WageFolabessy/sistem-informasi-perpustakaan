@@ -13,7 +13,7 @@ use App\Http\Controllers\Admin\SiteUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Admin\DashboardController;
-
+use App\Http\Controllers\Admin\LostReportController;
 
 // Rute Autentikasi Admin
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -75,6 +75,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('fines/{fine}', [FineController::class, 'show'])->name('fines.show');
         Route::patch('fines/{fine}/pay', [FineController::class, 'pay'])->name('fines.pay');
         Route::patch('fines/{fine}/waive', [FineController::class, 'waive'])->name('fines.waive');
+        
+        // --- Laporan Kehilangan ---
+        Route::get('lost-reports', [LostReportController::class, 'index'])->name('lost-reports.index');
+        Route::get('lost-reports/{lost_report}', [LostReportController::class, 'show'])->name('lost-reports.show');
+        Route::patch('lost-reports/{lost_report}/verify', [LostReportController::class, 'verify'])->name('lost-reports.verify');
+        Route::patch('lost-reports/{lost_report}/resolve', [LostReportController::class, 'resolve'])->name('lost-reports.resolve');
 
         // --- Pengaturan Sistem ---
         Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');

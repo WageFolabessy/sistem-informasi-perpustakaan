@@ -76,7 +76,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Route::is('admin.lost-reports.*') ? 'active' : '' }}"
+                    href="{{ route('admin.lost-reports.index') }}">
                     <i class="bi bi-exclamation-triangle-fill"></i> Laporan Kehilangan
                 </a>
             </li>

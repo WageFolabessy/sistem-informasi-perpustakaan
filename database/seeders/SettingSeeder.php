@@ -62,6 +62,11 @@ class SettingSeeder extends Seeder
                 'value' => '50000',
                 'description' => 'Batas maksimal jumlah denda per peminjaman (Rp). Isi 0 jika tidak ada batas.',
             ],
+            [
+                'key' => 'lost_book_fee',
+                'value' => '75000',
+                'description' => 'Biaya penggantian/denda tetap untuk buku yang hilang (Rp). Isi 0 jika tidak ada.'
+            ]
             // Tambahkan pengaturan lain jika ada, misalnya:
             // [
             //     'key' => 'lost_book_fee_percentage',

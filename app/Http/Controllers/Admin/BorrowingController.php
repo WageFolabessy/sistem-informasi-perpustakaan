@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ProcessReturnRequest;
 use App\Models\Borrowing;
+use App\Models\Fine;
 use App\Models\SiteUser;
 use App\Models\BookCopy;
 use App\Models\Setting;
@@ -17,7 +19,7 @@ use Carbon\Carbon;
 use App\Enum\BookCopyStatus;
 use App\Enum\BorrowingStatus;
 use App\Enum\FineStatus;
-
+use Illuminate\Support\Facades\Log;
 
 class BorrowingController extends Controller
 {
@@ -140,6 +142,61 @@ class BorrowingController extends Controller
             DB::rollBack();
             return redirect()->route('admin.borrowings.index')
                 ->with('error', 'Gagal menghapus data peminjaman: ' . $e->getMessage());
+        }
+    }
+
+    public function processReturn(ProcessReturnRequest $request, Borrowing $borrowing): RedirectResponse
+    {
+        $returnDate = Carbon::now()->startOfDay();
+        $dueDate = Carbon::parse($borrowing->due_date)->startOfDay();
+        $fineAmount = 0;
+        $fineCreated = false;
+
+        if ($returnDate->greaterThan($dueDate)) {
+            $overdueDays = $returnDate->diffInDays($dueDate);
+            $fineRate = (int) setting('fine_rate_per_day', 0);
+            if ($fineRate > 0 && $overdueDays > 0) {
+                $fineAmount = $overdueDays * $fineRate;
+            }
+        }
+
+        DB::beginTransaction();
+        try {
+            $borrowing->return_date = $returnDate->toDateString();
+            $borrowing->status = BorrowingStatus::Returned;
+            $borrowing->admin_user_id_return = Auth::guard('admin')->id();
+            $borrowing->save();
+
+            if ($borrowing->bookCopy) {
+                $borrowing->bookCopy->status = BookCopyStatus::Available;
+                $borrowing->bookCopy->save();
+            } else {
+                Log::warning("BookCopy tidak ditemukan untuk Borrowing ID: {$borrowing->id} saat proses return.");
+            }
+
+            if ($fineAmount > 0) {
+                Fine::create([
+                    'borrowing_id' => $borrowing->id,
+                    'amount' => $fineAmount,
+                    'status' => FineStatus::Unpaid,
+                ]);
+                $fineCreated = true;
+            }
+
+            DB::commit();
+
+            $successMessage = 'Buku berhasil dikembalikan.';
+            if ($fineCreated) {
+                $successMessage .= ' Denda keterlambatan sebesar Rp ' . number_format($fineAmount, 0, ',', '.') . ' telah dibuat.';
+            }
+
+            return redirect()->route('admin.borrowings.show', $borrowing)
+                ->with('success', $successMessage);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error("Error processing return for Borrowing ID: {$borrowing->id} - " . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Gagal memproses pengembalian: Terjadi kesalahan sistem.');
         }
     }
 }

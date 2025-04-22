@@ -51,7 +51,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
 
-        // --- Sirkulasi (Peminjaman) ---
+        // --- Manajemen Sirkulasi ---
         Route::resource('borrowings', BorrowingController::class)->only([
             'index',
             'create',
@@ -59,5 +59,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
             'show',
             'destroy'
         ]);
+        Route::patch('borrowings/{borrowing}/return', [BorrowingController::class, 'processReturn'])->name('borrowings.return');
+
+        // --- Pengaturan Sistem ---
+        Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+        Route::put('settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
     });
 });

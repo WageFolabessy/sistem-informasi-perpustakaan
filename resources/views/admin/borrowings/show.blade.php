@@ -7,12 +7,21 @@
 
 @section('content')
     <div class="row">
-        {{-- Kolom Utama (Info Peminjaman & Buku) --}}
         <div class="col-lg-8">
             {{-- Card Detail Peminjaman --}}
             <div class="card shadow mb-4">
-                <div class="card-header py-3">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                     <h6 class="m-0 font-weight-bold text-primary">Informasi Peminjaman</h6>
+                    @if (in_array($borrowing->status, [\App\Enum\BorrowingStatus::Borrowed, \App\Enum\BorrowingStatus::Overdue]))
+                        <form action="{{ route('admin.borrowings.return', $borrowing) }}" method="POST"
+                            onsubmit="return confirm('Anda yakin ingin memproses pengembalian buku ini?');">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="bi bi-check-circle-fill me-1"></i> Proses Pengembalian
+                            </button>
+                        </form>
+                    @endif
                 </div>
                 <div class="card-body">
                     <dl class="row">
@@ -100,7 +109,6 @@
 
         </div>
 
-        {{-- Kolom Kanan (Info Siswa) --}}
         <div class="col-lg-4">
             {{-- Card Detail Siswa --}}
             <div class="card shadow mb-4">
@@ -108,7 +116,6 @@
                     <h6 class="m-0 font-weight-bold text-primary">Informasi Siswa Peminjam</h6>
                 </div>
                 <div class="card-body">
-                    {{-- Gunakan dl class="row" agar konsisten --}}
                     <dl class="row">
                         <dt class="col-sm-4">NIS</dt>
                         <dd class="col-sm-8">{{ $borrowing->siteUser?->nis ?: '-' }}</dd>
@@ -123,26 +130,23 @@
                         <dd class="col-sm-8">{{ $borrowing->siteUser?->major ?: '-' }}</dd>
                     </dl>
                 </div>
-                {{-- Tambahkan link ke detail siswa jika ada --}}
-                {{-- <div class="card-footer text-end">
-                      <a href="{{ route('admin.site-users.edit', $borrowing->siteUser) }}" class="btn btn-sm btn-outline-primary">Lihat Detail Siswa</a>
-                 </div> --}}
+                <div class="card-footer text-end">
+                    <a href="{{ route('admin.site-users.show', $borrowing->siteUser) }}"
+                        class="btn btn-sm btn-outline-primary">Lihat Detail Siswa</a>
+                </div>
             </div>
         </div>
     </div>
 
-    {{-- Tombol Aksi di Bawah --}}
     <div class="d-flex justify-content-start mb-4">
         <a href="{{ route('admin.borrowings.index') }}" class="btn btn-secondary">
             <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar Peminjaman
         </a>
-        {{-- Tombol Aksi Lain? Misal Cetak Bukti? --}}
     </div>
 @endsection
 
 @section('css')
     <style>
-        /* Atur margin bawah untuk dt dan dd agar rapi */
         dl.row dt {
             margin-bottom: 0.75rem;
             font-weight: 600;

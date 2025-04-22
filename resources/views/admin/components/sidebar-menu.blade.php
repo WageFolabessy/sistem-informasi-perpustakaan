@@ -40,7 +40,7 @@
         <h6 class="sidebar-heading px-3 mb-1 text-uppercase">Pengguna</h6>
         <ul class="nav flex-column nav-submenu">
             <li class="nav-item">
-                <a class="nav-link {{ Route::is(['admin.site-users.index', 'admin.site-users.create', 'admin.site-users.edit', 'admin.site-users.show']) ? 'active' : '' }}"
+                <a class="nav-link {{ Route::is(['admin.site-users.index', 'admin.site-users.create', 'admin.site-users.edit', 'admin.site-users.show', 'admin.site-users.pending']) ? 'active' : '' }}"
                     href="{{ route('admin.site-users.index') }}">
                     <i class="bi bi-people-fill"></i> Manajemen Siswa
                 </a>
@@ -57,36 +57,29 @@
     <li class="nav-item mt-2">
         <h6 class="sidebar-heading px-3 mb-1 text-uppercase">Sirkulasi</h6>
         <ul class="nav flex-column nav-submenu">
-            {{-- Tambahkan link ke index --}}
             <li class="nav-item">
                 <a class="nav-link {{ Route::is('admin.borrowings.*') ? 'active' : '' }}"
                     href="{{ route('admin.borrowings.index') }}">
-                    <i class="bi bi-arrow-up-right-square-fill"></i> Manajemen Peminjaman Buku
-                </a>
-            </li>
-            {{-- Link lain (Pengembalian, Booking, Overdue, dll.) --}}
-            <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.returns.create') ? 'active' : '' --}}" href="#">
-                    <i class="bi bi-arrow-down-left-square-fill"></i> Manajemen Pengembalian Buku
+                    <i class="bi bi-arrow-repeat"></i> Manajemen Sirkulasi
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.bookings.*') ? 'active' : '' --}}" href="#">
+                <a class="nav-link" href="#">
                     <i class="bi bi-journal-bookmark-fill"></i> Manajemen Booking
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.borrowings.overdue') ? 'active' : '' --}}" href="#">
+                <a class="nav-link" href="#">
                     <i class="bi bi-calendar-x-fill"></i> Buku Lewat Tempo
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.lost-reports.*') ? 'active' : '' --}}" href="#">
+                <a class="nav-link" href="#">
                     <i class="bi bi-exclamation-triangle-fill"></i> Laporan Kehilangan
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.fines.*') ? 'active' : '' --}}" href="#">
+                <a class="nav-link" href="#">
                     <i class="bi bi-cash-coin"></i> Manajemen Denda
                 </a>
             </li>
@@ -97,22 +90,22 @@
         <h6 class="sidebar-heading px-3 mb-1 text-uppercase">Laporan</h6>
         <ul class="nav flex-column nav-submenu">
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.reports.borrowings') ? 'active' : '' --}}" href="#">
+                <a class="nav-link" href="#">
                     <i class="bi bi-file-earmark-bar-graph-fill"></i> Lap. Peminjaman
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.reports.procurement') ? 'active' : '' --}}" href="#">
+                <a class="nav-link" href="#">
                     <i class="bi bi-file-earmark-ruled-fill"></i> Lap. Pengadaan
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.reports.lost') ? 'active' : '' --}}" href="#">
+                <a class="nav-link" href="#">
                     <i class="bi bi-file-earmark-excel-fill"></i> Lap. Kehilangan
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.reports.fines') ? 'active' : '' --}}" href="#">
+                <a class="nav-link" href="#">
                     <i class="bi bi-file-earmark-medical-fill"></i> Lap. Denda
                 </a>
             </li>
@@ -122,11 +115,10 @@
     <li class="nav-item mt-2">
         <h6 class="sidebar-heading px-3 mb-1 text-uppercase">Sistem</h6>
         <ul class="nav flex-column nav-submenu">
-            <li class="nav-item">
-                <a class="nav-link {{-- Route::is('admin.settings.*') ? 'active' : '' --}}" href="#">
-                    <i class="bi bi-gear-fill"></i> Pengaturan
-                </a>
-            </li>
+            <a class="nav-link {{ Route::is('admin.settings.*') ? 'active' : '' }}"
+                href="{{ route('admin.settings.index') }}">
+                <i class="bi bi-gear-fill"></i> Pengaturan
+            </a>
         </ul>
     </li>
 </ul>

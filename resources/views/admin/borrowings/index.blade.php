@@ -63,7 +63,18 @@
                                                 title="Detail">
                                                 <i class="bi bi-eye-fill"></i>
                                             </a>
-                                            {{-- Tombol Hapus hanya jika sudah selesai --}}
+                                            @if (in_array($borrowing->status, [\App\Enum\BorrowingStatus::Borrowed, \App\Enum\BorrowingStatus::Overdue]))
+                                                <form action="{{ route('admin.borrowings.return', $borrowing) }}"
+                                                    method="POST" class="d-inline"
+                                                    onsubmit="return confirm('Proses pengembalian untuk buku ini?');">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit" class="btn btn-success"
+                                                        title="Proses Pengembalian">
+                                                        <i class="bi bi-check"></i>
+                                                    </button>
+                                                </form>
+                                            @endif
                                             @if (!$borrowing->status->isActive())
                                                 <button type="button" class="btn btn-danger" title="Hapus Riwayat"
                                                     data-bs-toggle="modal"

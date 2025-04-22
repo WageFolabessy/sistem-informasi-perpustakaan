@@ -22,6 +22,7 @@ class UpdateSettingsRequest extends FormRequest
             'settings.booking_expiry_days' => ['required', 'integer', 'min:1'],
             'settings.library_name' => ['required', 'string', 'max:255'],
             'settings.library_address' => ['nullable', 'string'],
+            'settings.max_fine_amount' => ['required', 'integer', 'min:0'],
             'settings.*' => ['nullable', 'string'],
         ];
     }
@@ -50,6 +51,10 @@ class UpdateSettingsRequest extends FormRequest
 
             'settings.library_name.required' => 'Nama Perpustakaan wajib diisi.',
             'settings.library_name.max' => 'Nama Perpustakaan maksimal 255 karakter.',
+
+            'settings.max_fine_amount.required' => 'Batas Maksimal Denda wajib diisi.',
+            'settings.max_fine_amount.integer' => 'Batas Maksimal Denda harus angka.',
+            'settings.max_fine_amount.min' => 'Batas Maksimal Denda tidak boleh negatif (isi 0 jika tanpa batas).',
         ];
     }
 }

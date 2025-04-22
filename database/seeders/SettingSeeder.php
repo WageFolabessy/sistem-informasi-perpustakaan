@@ -39,7 +39,7 @@ class SettingSeeder extends Seeder
             ],
             [
                 'key' => 'loan_duration',
-                'value' => '7',
+                'value' => '2',
                 'description' => 'Durasi standar peminjaman buku (dalam hari).',
             ],
             [
@@ -57,6 +57,11 @@ class SettingSeeder extends Seeder
                 'value' => '2',
                 'description' => 'Batas waktu pengambilan buku yang sudah dibooking (dalam hari).',
             ],
+            [
+                'key' => 'max_fine_amount',
+                'value' => '50000',
+                'description' => 'Batas maksimal jumlah denda per peminjaman (Rp). Isi 0 jika tidak ada batas.',
+            ],
             // Tambahkan pengaturan lain jika ada, misalnya:
             // [
             //     'key' => 'lost_book_fee_percentage',
@@ -68,7 +73,7 @@ class SettingSeeder extends Seeder
         foreach ($settings as $settingData) {
             Setting::updateOrCreate(
                 ['key' => $settingData['key']],
-                [ 
+                [
                     'value' => $settingData['value'],
                     'description' => $settingData['description']
                 ]

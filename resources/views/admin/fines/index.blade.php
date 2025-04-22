@@ -28,6 +28,7 @@
                                 <th class="text-center">Status</th>
                                 <th>Tgl Bayar/Bebas</th>
                                 <th>Admin Proses</th>
+                                <th>Catatan</th> {{-- Kolom Baru --}}
                                 <th class="text-center action-column no-sort">Aksi</th>
                             </tr>
                         </thead>
@@ -54,27 +55,29 @@
                                             <span class="badge bg-secondary">-</span>
                                         @endif
                                     </td>
-                                    <td>{{ $fine->payment_date ? $fine->payment_date->isoFormat('D MMM YYYY, HH:mm') : '-' }}
+                                    <td>{{ $fine->payment_date ? $fine->payment_date->isoFormat('D MMM H:mm') : '-' }}
                                     </td>
                                     <td>{{ $fine->paymentProcessor?->name ?? '-' }}</td>
+                                    <td>
+                                        <span title="{{ $fine->notes }}">{{ Str::limit($fine->notes, 50, '...') }}</span>
+                                    </td>
                                     <td class="action-column text-center">
                                         @if ($fine->status === App\Enum\FineStatus::Unpaid)
                                             <div class="btn-group btn-group-sm">
-                                                <form action="{{ route('admin.fines.pay', $fine) }}" method="POST"
-                                                    class="d-inline"
-                                                    onsubmit="return confirm('Tandai denda ini sebagai LUNAS?');">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit" class="btn btn-success" title="Tandai Lunas">
-                                                        <i class="bi bi-cash-coin"></i> Bayar
-                                                    </button>
-                                                </form>
-                                                <button type="button" class="btn btn-secondary" title="Bebaskan Denda"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#waiveModal-{{ $fine->id }}">
+                                                <a href="{{ route('admin.fines.show', $fine) }}" class="btn btn-info"
+                                                    title="Detail Denda">
+                                                    <i class="bi bi-eye-fill"></i>
+                                                </a>
+                                                <button type="button" class="btn btn-success" title="Tandai Lunas"
+                                                    data-bs-toggle="modal" data-bs-target="#payModal-{{ $fine->id }}">
+
                                                     <i class="bi bi-slash-circle"></i> Bebaskan
                                                 </button>
                                             </div>
+                                        @elseif($fine->status === App\Enum\FineStatus::Paid || $fine->status === App\Enum\FineStatus::Waived)
+                                            <a href="{{ route('admin.fines.show', $fine) }}"
+                                                class="btn btn-sm btn-info" title="Lihat Detail"><i
+                                                    class="bi bi-eye-fill"></i></a>
                                         @else
                                             <span class="text-muted">-</span>
                                         @endif
@@ -85,38 +88,91 @@
                     </table>
                 </div>
 
-                {{-- Modal Bebaskan Denda --}}
                 @foreach ($fines as $fine)
                     @if ($fine->status === App\Enum\FineStatus::Unpaid)
+                        <div class="modal fade" id="payModal-{{ $fine->id }}" tabindex="-1"
+                            aria-labelledby="payModalLabel-{{ $fine->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <form action="{{ route('admin.fines.pay', $fine) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="payModalLabel-{{ $fine->id }}">Konfirmasi
+                                                Pembayaran Denda</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Anda akan menandai lunas denda sebesar <strong>Rp
+                                                    {{ number_format($fine->amount, 0, ',', '.') }}</strong> untuk:</p>
+                                            <ul>
+                                                <li>Peminjam:
+                                                    <strong>{{ $fine->borrowing?->siteUser?->name ?? 'N/A' }}</strong>
+                                                </li>
+                                                <li>Buku:
+                                                    <strong>{{ $fine->borrowing?->bookCopy?->book?->title ?? 'N/A' }}</strong>
+                                                </li>
+                                            </ul>
+                                            <div class="mb-3">
+                                                <label for="payment_notes-{{ $fine->id }}" class="form-label">Catatan
+                                                    Pembayaran (Opsional):</label>
+                                                <textarea class="form-control @error('payment_notes') is-invalid @enderror" id="payment_notes-{{ $fine->id }}"
+                                                    name="payment_notes" rows="3">{{ old('payment_notes') }}</textarea>
+                                                @error('payment_notes')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="bi bi-check-circle-fill me-1"></i> Ya, Tandai Lunas
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
                         <div class="modal fade" id="waiveModal-{{ $fine->id }}" tabindex="-1"
                             aria-labelledby="waiveModalLabel-{{ $fine->id }}" aria-hidden="true">
                             <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h1 class="modal-title fs-5" id="waiveModalLabel-{{ $fine->id }}">Konfirmasi
-                                            Bebaskan Denda</h1>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        Apakah Anda yakin ingin membebaskan denda sebesar <strong>Rp
-                                            {{ number_format($fine->amount, 0, ',', '.') }}</strong> untuk peminjaman buku
-                                        <strong>{{ $fine->borrowing?->bookCopy?->book?->title ?? 'N/A' }}</strong> oleh
-                                        <strong>{{ $fine->borrowing?->siteUser?->name ?? 'N/A' }}</strong>?
-                                        {{-- Bisa ditambahkan input untuk alasan pembebasan jika perlu --}}
-                                        {{-- <textarea name="waiver_notes" class="form-control mt-2" placeholder="Alasan pembebasan (opsional)"></textarea> --}}
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Batal</button>
-                                        <form action="{{ route('admin.fines.waive', $fine) }}" method="POST"
-                                            class="d-inline">
-                                            @csrf
-                                            @method('PATCH')
+                                <form action="{{ route('admin.fines.waive', $fine) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="waiveModalLabel-{{ $fine->id }}">
+                                                Konfirmasi Bebaskan Denda</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Apakah Anda yakin ingin membebaskan denda sebesar <strong>Rp
+                                                    {{ number_format($fine->amount, 0, ',', '.') }}</strong> untuk
+                                                peminjaman buku
+                                                <strong>{{ $fine->borrowing?->bookCopy?->book?->title ?? 'N/A' }}</strong>
+                                                oleh <strong>{{ $fine->borrowing?->siteUser?->name ?? 'N/A' }}</strong>?
+                                            </p>
+                                            <div class="mb-3">
+                                                <label for="waiver_notes-{{ $fine->id }}" class="form-label">Alasan /
+                                                    Catatan Pembebasan (Opsional):</label>
+                                                <textarea class="form-control @error('waiver_notes') is-invalid @enderror" id="waiver_notes-{{ $fine->id }}"
+                                                    name="waiver_notes" rows="3">{{ old('waiver_notes') }}</textarea>
+                                                @error('waiver_notes')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Batal</button>
                                             <button type="submit" class="btn btn-warning">Ya, Bebaskan Denda</button>
-                                        </form>
+                                        </div>
                                     </div>
-                                </div>
+                                </form>
                             </div>
                         </div>
                     @endif
@@ -142,4 +198,20 @@
 
 @section('script')
     @include('admin.components.datatable_script', ['table_id' => 'dataTableFines'])
+    <script>
+        @foreach ($fines as $fine)
+            @if ($errors->hasBag('pay_' . $fine->id))
+                var payModal = new bootstrap.Modal(document.getElementById('payModal-{{ $fine->id }}'));
+                if (payModal) {
+                    payModal.show();
+                }
+            @endif
+            @if ($errors->hasBag('waive_' . $fine->id))
+                var waiveModal = new bootstrap.Modal(document.getElementById('waiveModal-{{ $fine->id }}'));
+                if (waiveModal) {
+                    waiveModal.show();
+                }
+            @endif
+        @endforeach
+    </script>
 @endsection

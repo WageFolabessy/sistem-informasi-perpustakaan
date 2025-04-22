@@ -147,16 +147,28 @@ class BorrowingController extends Controller
 
     public function processReturn(ProcessReturnRequest $request, Borrowing $borrowing): RedirectResponse
     {
+        $adminNotes = $request->input('return_notes');
+
         $returnDate = Carbon::now()->startOfDay();
         $dueDate = Carbon::parse($borrowing->due_date)->startOfDay();
         $fineAmount = 0;
         $fineCreated = false;
+        $overdueDays = 0;
+        $calculatedFine = 0;
 
         if ($returnDate->greaterThan($dueDate)) {
-            $overdueDays = $returnDate->diffInDays($dueDate);
+            $overdueDays = $returnDate->diffInDays($dueDate, true);
             $fineRate = (int) setting('fine_rate_per_day', 0);
+
             if ($fineRate > 0 && $overdueDays > 0) {
-                $fineAmount = $overdueDays * $fineRate;
+                $calculatedFine = $overdueDays * $fineRate;
+                $maxFine = (int) setting('max_fine_amount', 0);
+
+                if ($maxFine > 0 && $calculatedFine > $maxFine) {
+                    $fineAmount = $maxFine;
+                } else {
+                    $fineAmount = $calculatedFine;
+                }
             }
         }
 
@@ -165,20 +177,30 @@ class BorrowingController extends Controller
             $borrowing->return_date = $returnDate->toDateString();
             $borrowing->status = BorrowingStatus::Returned;
             $borrowing->admin_user_id_return = Auth::guard('admin')->id();
+
             $borrowing->save();
 
             if ($borrowing->bookCopy) {
                 $borrowing->bookCopy->status = BookCopyStatus::Available;
                 $borrowing->bookCopy->save();
             } else {
-                Log::warning("BookCopy tidak ditemukan untuk Borrowing ID: {$borrowing->id} saat proses return.");
+                Log::warning("BookCopy not found for Borrowing ID: {$borrowing->id} during return process.");
             }
 
             if ($fineAmount > 0) {
+                $fineNotes = "Denda keterlambatan {$overdueDays} hari.";
+                if (isset($maxFine) && $maxFine > 0 && $calculatedFine > $maxFine) {
+                    $fineNotes .= " (Jumlah asli: Rp " . number_format($calculatedFine, 0, ',', '.') . ", diterapkan batas maks: Rp " . number_format($maxFine, 0, ',', '.') . ")";
+                }
+                if (!empty($adminNotes)) {
+                    $fineNotes .= "\n\nCatatan Admin: " . $adminNotes;
+                }
+
                 Fine::create([
                     'borrowing_id' => $borrowing->id,
                     'amount' => $fineAmount,
                     'status' => FineStatus::Unpaid,
+                    'notes' => trim($fineNotes),
                 ]);
                 $fineCreated = true;
             }
@@ -194,7 +216,7 @@ class BorrowingController extends Controller
                 ->with('success', $successMessage);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("Error processing return for Borrowing ID: {$borrowing->id} - " . $e->getMessage());
+            Log::error("EXCEPTION during return process for Borrowing ID: {$borrowing->id} - " . $e->getMessage() . "\n" . $e->getTraceAsString());
             return redirect()->back()
                 ->with('error', 'Gagal memproses pengembalian: Terjadi kesalahan sistem.');
         }

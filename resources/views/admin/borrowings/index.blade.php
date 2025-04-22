@@ -64,16 +64,11 @@
                                                 <i class="bi bi-eye-fill"></i>
                                             </a>
                                             @if (in_array($borrowing->status, [\App\Enum\BorrowingStatus::Borrowed, \App\Enum\BorrowingStatus::Overdue]))
-                                                <form action="{{ route('admin.borrowings.return', $borrowing) }}"
-                                                    method="POST" class="d-inline"
-                                                    onsubmit="return confirm('Proses pengembalian untuk buku ini?');">
-                                                    @csrf
-                                                    @method('PATCH')
-                                                    <button type="submit" class="btn btn-success"
-                                                        title="Proses Pengembalian">
-                                                        <i class="bi bi-check"></i>
-                                                    </button>
-                                                </form>
+                                                <button type="button" class="btn btn-success" title="Proses Pengembalian"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#returnModal-{{ $borrowing->id }}">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
                                             @endif
                                             @if (!$borrowing->status->isActive())
                                                 <button type="button" class="btn btn-danger" title="Hapus Riwayat"
@@ -90,7 +85,6 @@
                     </table>
                 </div>
 
-                {{-- Modal Hapus Peminjaman --}}
                 @foreach ($borrowings as $borrowing)
                     @if (!$borrowing->status->isActive())
                         <div class="modal fade" id="deleteModal-{{ $borrowing->id }}" tabindex="-1"
@@ -122,6 +116,60 @@
                             </div>
                         </div>
                     @endif
+
+                    {{-- Modal Proses Pengembalian (jika aktif) --}}
+                    @if (in_array($borrowing->status, [\App\Enum\BorrowingStatus::Borrowed, \App\Enum\BorrowingStatus::Overdue]))
+                        <div class="modal fade" id="returnModal-{{ $borrowing->id }}" tabindex="-1"
+                            aria-labelledby="returnModalLabel-{{ $borrowing->id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <form action="{{ route('admin.borrowings.return', $borrowing) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="returnModalLabel-{{ $borrowing->id }}">
+                                                Konfirmasi Pengembalian</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Anda akan memproses pengembalian untuk:</p>
+                                            <ul>
+                                                <li>Buku:
+                                                    <strong>{{ $borrowing->bookCopy?->book?->title ?? 'N/A' }}</strong>
+                                                </li>
+                                                <li>Kode Eksemplar:
+                                                    <strong>{{ $borrowing->bookCopy?->copy_code ?? 'N/A' }}</strong>
+                                                </li>
+                                                <li>Peminjam: <strong>{{ $borrowing->siteUser?->name ?? 'N/A' }}</strong>
+                                                </li>
+                                                <li>Jatuh Tempo:
+                                                    <strong>{{ $borrowing->due_date ? $borrowing->due_date->isoFormat('D MMM YYYY') : '-' }}</strong>
+                                                </li>
+                                            </ul>
+                                            <p>Sistem akan menghitung denda secara otomatis jika ada keterlambatan.</p>
+                                            <div class="mb-3">
+                                                <label for="return_notes-{{ $borrowing->id }}" class="form-label">Catatan
+                                                    Pengembalian (Opsional):</label>
+                                                <textarea class="form-control @error('return_notes') is-invalid @enderror" id="return_notes-{{ $borrowing->id }}"
+                                                    name="return_notes" rows="3">{{ old('return_notes') }}</textarea>
+                                                @error('return_notes')
+                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Batal</button>
+                                            <button type="submit" class="btn btn-success">
+                                                <i class="bi bi-check-circle-fill me-1"></i> Ya, Proses Pengembalian
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    @endif
                 @endforeach
             @endif
         </div>
@@ -133,15 +181,25 @@
         .action-column {
             white-space: nowrap;
             width: 1%;
-            text-align: center
+            text-align: center;
         }
 
         .action-column .btn .bi {
-            vertical-align: middle
+            vertical-align: middle;
         }
     </style>
 @endsection
 
 @section('script')
     @include('admin.components.datatable_script', ['table_id' => 'dataTableBorrowings'])
+    <script>
+        @foreach ($borrowings as $borrowing)
+            @if ($errors->hasBag('return_' . $borrowing->id))
+                var returnModal = new bootstrap.Modal(document.getElementById('returnModal-{{ $borrowing->id }}'));
+                if (returnModal) {
+                    returnModal.show();
+                }
+            @endif
+        @endforeach
+    </script>
 @endsection

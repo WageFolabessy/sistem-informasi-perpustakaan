@@ -64,9 +64,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         // --- Manajemen Denda ---
         Route::get('fines', [FineController::class, 'index'])->name('fines.index');
+        Route::get('fines/{fine}', [FineController::class, 'show'])->name('fines.show');
         Route::patch('fines/{fine}/pay', [FineController::class, 'pay'])->name('fines.pay');
         Route::patch('fines/{fine}/waive', [FineController::class, 'waive'])->name('fines.waive');
-        
+
         // --- Pengaturan Sistem ---
         Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::put('settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');

@@ -21,6 +21,16 @@ class ProcessReturnRequest extends FormRequest
 
     public function rules(): array
     {
-        return [];
+        return [
+            'return_notes' => ['nullable', 'string', 'max:1000'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'return_notes.string' => 'Catatan pengembalian harus berupa teks.',
+            'return_notes.max' => 'Catatan pengembalian terlalu panjang (maksimal 1000 karakter).',
+        ];
     }
 }

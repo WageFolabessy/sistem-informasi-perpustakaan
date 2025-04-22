@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AuthorController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\BorrowingController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\FineController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\PublisherController;
 use App\Http\Controllers\Admin\SiteUserController;
@@ -61,6 +62,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
         ]);
         Route::patch('borrowings/{borrowing}/return', [BorrowingController::class, 'processReturn'])->name('borrowings.return');
 
+        // --- Manajemen Denda ---
+        Route::get('fines', [FineController::class, 'index'])->name('fines.index');
+        Route::patch('fines/{fine}/pay', [FineController::class, 'pay'])->name('fines.pay');
+        Route::patch('fines/{fine}/waive', [FineController::class, 'waive'])->name('fines.waive');
+        
         // --- Pengaturan Sistem ---
         Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::put('settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');

@@ -79,7 +79,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Route::is('admin.fines.*') ? 'active' : '' }}"
+                    href="{{ route('admin.fines.index') }}">
                     <i class="bi bi-cash-coin"></i> Manajemen Denda
                 </a>
             </li>

@@ -31,9 +31,7 @@ class BorrowingController extends Controller
             'bookCopy.book:id,title',
             'loanProcessor:id,name',
             'returnProcessor:id,name'
-        ])
-            ->latest('borrow_date')
-            ->get();
+        ])->latest('borrow_date')->get();
 
         return view('admin.borrowings.index', compact('borrowings'));
     }
@@ -46,7 +44,9 @@ class BorrowingController extends Controller
             ->orderBy('copy_code')
             ->get(['id', 'copy_code', 'book_id']);
 
-        return view('admin.borrowings.create', compact('students', 'availableCopies'));
+        $loanDuration = (int) (Setting::where('key', 'loan_duration')->value('value') ?? 7);
+
+        return view('admin.borrowings.create', compact('students', 'availableCopies', 'loanDuration'));
     }
 
     public function store(StoreBorrowingRequest $request): RedirectResponse

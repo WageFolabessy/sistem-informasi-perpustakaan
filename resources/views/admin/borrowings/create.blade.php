@@ -16,7 +16,6 @@
                 @csrf
 
                 <div class="row">
-                    {{-- Pilih Siswa --}}
                     <div class="col-md-6 mb-3">
                         <label for="site_user_id" class="form-label">Siswa Peminjam</label>
                         <select class="form-select @error('site_user_id') is-invalid @enderror" id="site_user_id"
@@ -32,10 +31,8 @@
                         @error('site_user_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                        {{-- TODO: Ganti dengan select2/tom-select untuk pencarian mudah --}}
                     </div>
 
-                    {{-- Pilih Eksemplar Buku --}}
                     <div class="col-md-6 mb-3">
                         <label for="book_copy_id" class="form-label">Eksemplar Buku</label>
                         <select class="form-select @error('book_copy_id') is-invalid @enderror" id="book_copy_id"
@@ -51,7 +48,6 @@
                         @error('book_copy_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                        {{-- TODO: Ganti dengan select2/tom-select --}}
                     </div>
                 </div>
 
@@ -66,9 +62,8 @@
                         @enderror
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">Perkiraan Tgl Kembali</label>
-                        <input type="text" class="form-control" id="due_date_display" value="Otomatis" readonly disabled>
-                        {{-- Bisa diisi otomatis via JS atau biarkan kosong --}}
+                        <label class="form-label">Tanggal Kembali</label>
+                        <input type="text" class="form-control" id="due_date_display" readonly disabled>
                     </div>
                 </div>
 
@@ -86,23 +81,46 @@
 @endsection
 
 @section('css')
-    {{-- Jika pakai select2/tom-select, tambahkan CSS-nya di sini --}}
 @endsection
 
 @section('script')
-    {{-- Jika pakai select2/tom-select, tambahkan JS-nya di sini --}}
-    {{-- Contoh JS sederhana untuk update perkiraan tgl kembali (perlu Carbon di JS atau kirim setting durasi) --}}
     <script>
-        // document.getElementById('borrow_date').addEventListener('change', function() {
-        //     const borrowDate = this.value;
-        //     const loanDuration = 7; // Ambil dari setting via Blade jika memungkinkan
-        //     if(borrowDate) {
-        //         let date = new Date(borrowDate);
-        //         date.setDate(date.getDate() + loanDuration);
-        //         document.getElementById('due_date_display').value = date.toISOString().slice(0,10);
-        //     } else {
-        //          document.getElementById('due_date_display').value = 'Otomatis';
-        //     }
-        // });
+        const borrowDateInput = document.getElementById('borrow_date');
+        const dueDateDisplay = document.getElementById('due_date_display');
+        const loanDuration = parseInt("{{ $loanDuration ?? 7 }}");
+        console.log(loanDuration);
+
+        function calculateAndDisplayDueDate() {
+            const borrowDateValue = borrowDateInput.value;
+
+            if (borrowDateValue) {
+                try {
+                    let borrowDate = new Date(borrowDateValue);
+                    if (isNaN(borrowDate.getTime())) {
+                        dueDateDisplay.value = 'Tgl Pinjam Invalid';
+                        return;
+                    }
+
+                    let dueDate = new Date(borrowDate.getTime());
+                    dueDate.setDate(dueDate.getDate() + loanDuration);
+
+                    const year = dueDate.getFullYear();
+                    const month = String(dueDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(dueDate.getDate()).padStart(2, '0');
+
+                    dueDateDisplay.value = `${day}-${month}-${year}`;
+
+                } catch (e) {
+                    console.error("Error calculating due date:", e);
+                    dueDateDisplay.value = 'Error';
+                }
+            } else {
+                dueDateDisplay.value = '';
+            }
+        }
+
+        borrowDateInput.addEventListener('change', calculateAndDisplayDueDate);
+
+        document.addEventListener('DOMContentLoaded', calculateAndDisplayDueDate);
     </script>
 @endsection

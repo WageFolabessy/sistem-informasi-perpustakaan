@@ -106,7 +106,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Route::is('admin.reports.lost-books') ? 'active' : '' }}"
+                    href="{{ route('admin.reports.lost-books') }}">
                     <i class="bi bi-file-earmark-excel-fill"></i> Lap. Kehilangan
                 </a>
             </li>

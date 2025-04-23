@@ -4,11 +4,9 @@
 @section('page-title', 'Laporan Pengadaan Buku')
 
 @section('content')
-    {{-- Card Filter --}}
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
             <h6 class="m-0 font-weight-bold text-primary">Filter Laporan Pengadaan</h6>
-            {{-- Tombol Export --}}
             @if (!$errors->has('start_date') && !$errors->has('end_date') && $startDate && $endDate)
                 <form action="{{ route('admin.reports.procurements.export') }}" method="GET" class="d-inline-block">
                     <input type="hidden" name="start_date" value="{{ $startDate }}">
@@ -20,7 +18,6 @@
             @endif
         </div>
         <div class="card-body">
-            {{-- Form Filter Tanggal --}}
             <form action="{{ route('admin.reports.procurements') }}" method="GET" class="row g-3 align-items-end mb-3">
                 <div class="col-md-5">
                     <label for="start_date" class="form-label">Tanggal Mulai Pengadaan</label>
@@ -49,14 +46,12 @@
                 </div>
             </form>
             @include('admin.components.flash_messages')
-            {{-- Tampilkan error umum jika BUKAN error spesifik tanggal --}}
             @if ($errors->any() && !$errors->has('start_date') && !$errors->has('end_date'))
                 @include('admin.components.validation_errors')
             @endif
         </div>
     </div>
 
-    {{-- Card Hasil Laporan --}}
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">
@@ -71,7 +66,6 @@
             </h6>
         </div>
         <div class="card-body">
-            {{-- Cek jika TIDAK ada error tanggal --}}
             @if (!$errors->has('start_date') && !$errors->has('end_date'))
                 @if ($bookCopies->isEmpty())
                     <div class="alert alert-info text-center">
@@ -81,7 +75,6 @@
                     </div>
                 @else
                     <div class="table-responsive">
-                        {{-- Gunakan ID unik untuk datatable --}}
                         <table class="table table-bordered table-hover table-striped datatable"
                             id="dataTableReportProcurements" width="100%" cellspacing="0">
                             <thead class="table-light">
@@ -101,7 +94,6 @@
                                 @foreach ($bookCopies as $index => $copy)
                                     <tr class="align-middle">
                                         <td class="text-center">{{ $index + 1 }}</td>
-                                        {{-- Format tanggal pengadaan --}}
                                         <td>{{ $copy->created_at ? $copy->created_at->isoFormat('D MMM YY, HH:mm') : '-' }}
                                         </td>
                                         <td>{{ $copy->copy_code }}</td>
@@ -124,7 +116,6 @@
                         </table>
                     </div>
                 @endif
-                {{-- Jika ada error pada tanggal --}}
             @else
                 <div class="alert alert-warning text-center">
                     Silakan perbaiki input tanggal pada filter di atas.
@@ -136,11 +127,9 @@
 @endsection
 
 @section('css')
-    {{-- CSS tambahan jika perlu --}}
 @endsection
 
 @section('script')
-    {{-- Hanya inisialisasi datatable jika tabel ditampilkan dan ada data & tidak ada error tgl --}}
     @if (isset($bookCopies) && $bookCopies->count() > 0 && !$errors->has('start_date') && !$errors->has('end_date'))
         @include('admin.components.datatable_script', ['table_id' => 'dataTableReportProcurements'])
     @endif

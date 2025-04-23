@@ -65,7 +65,6 @@
                         </dd>
 
                         <dt class="col-sm-4">Tanggal Dilaporkan</dt>
-                        {{-- Format Tanggal Indonesia --}}
                         <dd class="col-sm-8">
                             {{ $lost_report->report_date ? $lost_report->report_date->isoFormat('dddd, D MMMM YYYY HH:mm') : '-' }}
                         </dd>
@@ -123,7 +122,7 @@
                         <dd class="col-sm-8">{{ $lost_report->bookCopy?->book?->title ?? '-' }}
                             @if ($lost_report->bookCopy?->book)
                                 <a href="{{ route('admin.books.show', $lost_report->bookCopy->book) }}"
-                                    class="badge bg-light text-dark text-decoration-none ms-1" title="Lihat Detail Buku"><i
+                                    class="badge bg-info text-dark text-decoration-none ms-1" title="Lihat Detail Buku"><i
                                         class="bi bi-box-arrow-up-right"></i></a>
                             @endif
                         </dd>
@@ -161,16 +160,16 @@
                             <dt class="col-sm-4">ID Peminjaman</dt>
                             <dd class="col-sm-8">{{ $lost_report->borrowing->id }}
                                 <a href="{{ route('admin.borrowings.show', $lost_report->borrowing) }}"
-                                    class="badge bg-light text-dark text-decoration-none ms-1"
+                                    class="badge bg-info text-dark text-decoration-none ms-1"
                                     title="Lihat Detail Peminjaman"><i class="bi bi-box-arrow-up-right"></i></a>
                             </dd>
                             <dt class="col-sm-4">Tgl Pinjam</dt>
                             <dd class="col-sm-8">
-                                {{ $lost_report->borrowing->borrow_date ? $lost_report->borrowing->borrow_date->isoFormat('D MMM YYYY') : '-' }}
+                                {{ $lost_report->borrowing->borrow_date ? $lost_report->borrowing->borrow_date->isoFormat('dddd, D MMMM YYYY HH:mm') : '-' }}
                             </dd>
                             <dt class="col-sm-4">Jatuh Tempo</dt>
                             <dd class="col-sm-8">
-                                {{ $lost_report->borrowing->due_date ? $lost_report->borrowing->due_date->isoFormat('D MMM YYYY') : '-' }}
+                                {{ $lost_report->borrowing->due_date ? $lost_report->borrowing->due_date->isoFormat('dddd, D MMMM YYYY HH:mm') : '-' }}
                             </dd>
                             <dt class="col-sm-4">Status Peminjaman</dt>
                             <dd class="col-sm-8">

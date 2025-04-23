@@ -13,10 +13,10 @@
                             <div class="col">
                                 <div class="text-xs fw-bold text-primary text-uppercase mb-1">
                                     Total Judul Buku</div>
-                                <div class="h5 mb-0 fw-bold text-gray-800">{{ $totalBooks }}</div>
+                                <div class="h5 mb-0 fw-bold text-primary">{{ $totalBooks }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="bi bi-journal-richtext fs-2 text-gray-300"></i>
+                                <i class="bi bi-journal-richtext fs-2 text-primary"></i>
                             </div>
                         </div>
                     </div>
@@ -32,10 +32,10 @@
                             <div class="col">
                                 <div class="text-xs fw-bold text-info text-uppercase mb-1">
                                     Total Eksemplar</div>
-                                <div class="h5 mb-0 fw-bold text-gray-800">{{ $totalCopies }}</div>
+                                <div class="h5 mb-0 fw-bold text-info">{{ $totalCopies }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="bi bi-book-fill fs-2 text-gray-300"></i>
+                                <i class="bi bi-book-fill fs-2 text-info"></i>
                             </div>
                         </div>
                     </div>
@@ -51,10 +51,10 @@
                             <div class="col">
                                 <div class="text-xs fw-bold text-success text-uppercase mb-1">
                                     Siswa Aktif</div>
-                                <div class="h5 mb-0 fw-bold text-gray-800">{{ $activeStudents }}</div>
+                                <div class="h5 mb-0 fw-bold text-success">{{ $activeStudents }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="bi bi-people-fill fs-2 text-gray-300"></i>
+                                <i class="bi bi-people-fill fs-2 text-success"></i>
                             </div>
                         </div>
                     </div>
@@ -70,10 +70,10 @@
                             <div class="col">
                                 <div class="text-xs fw-bold text-warning text-uppercase mb-1">
                                     Peminjaman Aktif</div>
-                                <div class="h5 mb-0 fw-bold text-gray-800">{{ $activeBorrowings }}</div>
+                                <div class="h5 mb-0 fw-bold text-warning">{{ $activeBorrowings }}</div>
                             </div>
                             <div class="col-auto">
-                                <i class="bi bi-arrow-up-right-square-fill fs-2 text-gray-300"></i>
+                                <i class="bi bi-arrow-up-right-square-fill fs-2 text-warning"></i>
                             </div>
                         </div>
                     </div>

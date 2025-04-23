@@ -100,7 +100,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Route::is('admin.reports.procurements') ? 'active' : '' }}"
+                    href="{{ route('admin.reports.procurements') }}">
                     <i class="bi bi-file-earmark-ruled-fill"></i> Lap. Pengadaan
                 </a>
             </li>

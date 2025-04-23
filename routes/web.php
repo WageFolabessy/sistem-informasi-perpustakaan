@@ -87,6 +87,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('borrowings', [ReportController::class, 'borrowingReport'])->name('borrowings');
             Route::get('borrowings/export', [ReportController::class, 'exportBorrowingsExcel'])->name('borrowings.export');
+            Route::get('procurements', [ReportController::class, 'procurementReport'])->name('procurements');
+            Route::get('procurements/export', [ReportController::class, 'exportProcurementsExcel'])->name('procurements.export');
             // Route::get('fines', [ReportController::class, 'fineReport'])->name('fines'); // Untuk Lap. Denda nanti
             // Route::get('lost-books', [ReportController::class, 'lostBookReport'])->name('lost-books'); // Untuk Lap. Kehilangan nanti
             // Route::get('procurements', [ReportController::class, 'procurementReport'])->name('procurements'); // Untuk Lap. Pengadaan nanti

@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\FineController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\PublisherController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SiteUserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
@@ -75,12 +76,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('fines/{fine}', [FineController::class, 'show'])->name('fines.show');
         Route::patch('fines/{fine}/pay', [FineController::class, 'pay'])->name('fines.pay');
         Route::patch('fines/{fine}/waive', [FineController::class, 'waive'])->name('fines.waive');
-        
+
         // --- Laporan Kehilangan ---
         Route::get('lost-reports', [LostReportController::class, 'index'])->name('lost-reports.index');
         Route::get('lost-reports/{lost_report}', [LostReportController::class, 'show'])->name('lost-reports.show');
         Route::patch('lost-reports/{lost_report}/verify', [LostReportController::class, 'verify'])->name('lost-reports.verify');
         Route::patch('lost-reports/{lost_report}/resolve', [LostReportController::class, 'resolve'])->name('lost-reports.resolve');
+
+        // --- Laporan ---
+        Route::prefix('reports')->name('reports.')->group(function () {
+            Route::get('borrowings', [ReportController::class, 'borrowingReport'])->name('borrowings');
+            Route::get('borrowings/export', [ReportController::class, 'exportBorrowingsExcel'])->name('borrowings.export');
+            // Route::get('fines', [ReportController::class, 'fineReport'])->name('fines'); // Untuk Lap. Denda nanti
+            // Route::get('lost-books', [ReportController::class, 'lostBookReport'])->name('lost-books'); // Untuk Lap. Kehilangan nanti
+            // Route::get('procurements', [ReportController::class, 'procurementReport'])->name('procurements'); // Untuk Lap. Pengadaan nanti
+        });
 
         // --- Pengaturan Sistem ---
         Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');

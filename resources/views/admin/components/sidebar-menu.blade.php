@@ -94,7 +94,8 @@
         <h6 class="sidebar-heading px-3 mb-1 text-uppercase">Laporan</h6>
         <ul class="nav flex-column nav-submenu">
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Route::is('admin.reports.borrowings') ? 'active' : '' }}"
+                    href="{{ route('admin.reports.borrowings') }}">
                     <i class="bi bi-file-earmark-bar-graph-fill"></i> Lap. Peminjaman
                 </a>
             </li>

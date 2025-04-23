@@ -91,9 +91,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('procurements/export', [ReportController::class, 'exportProcurementsExcel'])->name('procurements.export');
             Route::get('lost-books', [ReportController::class, 'lostBookReport'])->name('lost-books');
             Route::get('lost-books/export', [ReportController::class, 'exportLostBooksExcel'])->name('lost-books.export');
-            // Route::get('fines', [ReportController::class, 'fineReport'])->name('fines'); // Untuk Lap. Denda nanti
-            // Route::get('lost-books', [ReportController::class, 'lostBookReport'])->name('lost-books'); // Untuk Lap. Kehilangan nanti
-            // Route::get('procurements', [ReportController::class, 'procurementReport'])->name('procurements'); // Untuk Lap. Pengadaan nanti
+            Route::get('fines', [ReportController::class, 'fineReport'])->name('fines');
+            Route::get('fines/export', [ReportController::class, 'exportFinesExcel'])->name('fines.export');
         });
 
         // --- Pengaturan Sistem ---

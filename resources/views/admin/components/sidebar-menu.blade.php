@@ -112,7 +112,8 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link {{ Route::is('admin.reports.fines') ? 'active' : '' }}"
+                    href="{{ route('admin.reports.fines') }}">
                     <i class="bi bi-file-earmark-medical-fill"></i> Lap. Denda
                 </a>
             </li>

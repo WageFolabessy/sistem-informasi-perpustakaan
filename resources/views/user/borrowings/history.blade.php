@@ -5,7 +5,6 @@
 
 @section('content')
 
-    {{-- Bagian Peminjaman Aktif --}}
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 fw-bold text-primary"><i class="bi bi-arrow-up-right-square-fill me-2"></i>Buku Sedang Dipinjam
@@ -37,7 +36,6 @@
                                             style="max-width: 50px; height: auto;">
                                     </td>
                                     <td>
-                                        {{-- Link ke detail buku di katalog --}}
                                         <a href="{{ route('catalog.show', $borrowing->bookCopy?->book?->slug ?? '#') }}"
                                             class="text-decoration-none text-dark fw-medium">
                                             {{ $borrowing->bookCopy?->book?->title ?? 'Judul Tidak Diketahui' }}
@@ -45,7 +43,6 @@
                                     </td>
                                     <td>{{ $borrowing->bookCopy?->copy_code ?? 'N/A' }}</td>
                                     <td>{{ $borrowing->borrow_date?->isoFormat('D MMM YYYY') ?? '-' }}</td>
-                                    {{-- Beri warna merah jika overdue --}}
                                     <td class="{{ $borrowing->is_overdue ? 'text-danger fw-bold' : '' }}">
                                         {{ $borrowing->due_date?->isoFormat('D MMM YYYY') ?? '-' }}
                                         @if ($borrowing->is_overdue)
@@ -61,7 +58,6 @@
         </div>
     </div>
 
-    {{-- Bagian Riwayat Peminjaman Lampau --}}
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 fw-bold text-primary"><i class="bi bi-clock-history me-2"></i>Riwayat Peminjaman Terdahulu</h6>
@@ -73,7 +69,6 @@
                 </div>
             @else
                 <div class="table-responsive">
-                    {{-- Tidak perlu datatables jika pakai pagination server-side --}}
                     <table class="table table-hover" id="tablePastBorrowings">
                         <thead class="table-light">
                             <tr>
@@ -110,7 +105,6 @@
                                             Rp {{ number_format($borrowing->fine->amount, 0, ',', '.') }}
                                             <span
                                                 class="ms-1 badge bg-{{ $borrowing->fine->status->badgeColor() }}">{{ $borrowing->fine->status->label() }}</span>
-                                            {{-- TODO: Link ke halaman 'Denda Saya' jika ada --}}
                                             {{-- <a href="#" class="ms-1"><i class="bi bi-eye"></i></a> --}}
                                         @else
                                             -
@@ -122,7 +116,6 @@
                     </table>
                 </div>
 
-                {{-- Tampilkan Link Pagination --}}
                 <div class="mt-3 d-flex justify-content-center">
                     {{ $pastBorrowings->links() }}
                 </div>
@@ -133,9 +126,7 @@
 @endsection
 
 @section('css')
-    {{-- CSS tambahan jika perlu --}}
 @endsection
 
 @section('script')
-    {{-- Tidak perlu JS khusus, kecuali ingin DataTables untuk tabel aktif (tidak disarankan jika datanya sedikit) --}}
 @endsection

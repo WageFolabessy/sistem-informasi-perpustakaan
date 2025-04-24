@@ -31,7 +31,7 @@ class DashboardController extends Controller
             ->take(10)
             ->get();
 
-        return view('admin.index', compact(
+        return view('admin.dashboard', compact(
             'totalBooks',
             'totalCopies',
             'activeStudents',

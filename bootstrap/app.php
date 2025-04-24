@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 return route('admin.dashboard');
             }
             if (Auth::guard('web')->check()) { 
-                return '/user/dashboard';
+                return route('dashboard');
             }
             return '/';
         });

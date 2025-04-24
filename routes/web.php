@@ -11,10 +11,16 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\PublisherController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SiteUserController;
+use App\Http\Controllers\User\Auth\LoginController;
+use App\Http\Controllers\User\Auth\ResetPasswordController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\LostReportController;
+use App\Http\Controllers\User\Auth\ForgotPasswordController;
+use App\Http\Controllers\User\Auth\RegisterController;
+use App\Http\Controllers\User\DashboardController as UserDashboardController;
+
 
 // Rute Autentikasi Admin
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -30,7 +36,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
 
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
 
         // --- Manajemen Buku ---
         Route::resource('categories', CategoryController::class);
@@ -99,4 +105,31 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('settings', [App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::put('settings', [App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
     });
+});
+
+// --- Rute Autentikasi Siswa ---
+Route::middleware('guest:web')->group(function () {
+    // Login
+    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [LoginController::class, 'login']);
+
+    // Register
+    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('register', [RegisterController::class, 'register']);
+
+    // Forgot Password
+    Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+
+    // Reset Password
+    Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
+
+    Route::get('/register/pending', function () { return view('user.auth.pending'); })->name('register.pending');
+});
+
+// --- Rute Siswa Terautentikasi ---
+Route::middleware('auth:web')->group(function () {
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('/', [UserDashboardController::class, 'index'])->name('dashboard');
 });

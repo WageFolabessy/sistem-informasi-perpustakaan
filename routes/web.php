@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AuthorController;
-use App\Http\Controllers\Admin\BookController;
+use App\Http\Controllers\Admin\BookController as AdminBookController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\BorrowingController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\LostReportController;
 use App\Http\Controllers\User\Auth\ForgotPasswordController;
 use App\Http\Controllers\User\Auth\RegisterController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
+use App\Http\Controllers\User\BookController as UserBookController;
 
 
 // Rute Autentikasi Admin
@@ -42,10 +43,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('categories', CategoryController::class);
         Route::resource('authors', AuthorController::class);
         Route::resource('publishers', PublisherController::class);
-        Route::resource('books', BookController::class);
-        Route::post('books/{book}/copies', [BookController::class, 'storeCopy'])->name('books.copies.store');
-        Route::delete('book-copies/{copy}', [BookController::class, 'destroyCopy'])->name('book-copies.destroy');
-        Route::put('book-copies/{copy}', [BookController::class, 'updateCopy'])->name('book-copies.update');
+        Route::resource('books', AdminBookController::class);
+        Route::post('books/{book}/copies', [AdminBookController::class, 'storeCopy'])->name('books.copies.store');
+        Route::delete('book-copies/{copy}', [AdminBookController::class, 'destroyCopy'])->name('book-copies.destroy');
+        Route::put('book-copies/{copy}', [AdminBookController::class, 'updateCopy'])->name('book-copies.update');
 
         // --- Manajemen Siswa ---
         Route::get('site-users/pending', [SiteUserController::class, 'pendingRegistrations'])->name('site-users.pending');
@@ -125,11 +126,17 @@ Route::middleware('guest:web')->group(function () {
     Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
     Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
-    Route::get('/register/pending', function () { return view('user.auth.pending'); })->name('register.pending');
+    Route::get('/register/pending', function () {
+        return view('user.auth.pending');
+    })->name('register.pending');
 });
 
 // --- Rute Siswa Terautentikasi ---
 Route::middleware('auth:web')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/', [UserDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/katalog', [UserBookController::class, 'index'])->name('catalog.index');
+    Route::get('/katalog/search', [UserBookController::class, 'searchApi'])->name('catalog.search.api');
+    Route::get('/katalog/{book:slug}', [UserBookController::class, 'show'])->name('catalog.show');
 });

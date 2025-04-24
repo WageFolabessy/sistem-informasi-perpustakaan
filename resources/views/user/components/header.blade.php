@@ -16,7 +16,8 @@
 
                 @auth('web')
                     <li class="nav-item">
-                        <a class="nav-link {{-- Request::is('katalog*') ? 'active' : '' --}}" href="#">
+                        <a class="nav-link {{ Route::is('catalog.*') ? 'active' : '' }}"
+                            href="{{ route('catalog.index') }}">
                             <i class="bi bi-search me-1"></i> Katalog Buku
                         </a>
                     </li>

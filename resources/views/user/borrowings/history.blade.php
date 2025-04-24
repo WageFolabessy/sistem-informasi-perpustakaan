@@ -1,0 +1,141 @@
+@extends('user.components.main')
+
+@section('title', 'Riwayat Peminjaman')
+@section('page-title', 'Riwayat Peminjaman Buku')
+
+@section('content')
+
+    {{-- Bagian Peminjaman Aktif --}}
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 fw-bold text-primary"><i class="bi bi-arrow-up-right-square-fill me-2"></i>Buku Sedang Dipinjam
+            </h6>
+        </div>
+        <div class="card-body">
+            @if ($activeBorrowings->isEmpty())
+                <div class="alert alert-info text-center mb-0">
+                    Anda sedang tidak meminjam buku.
+                </div>
+            @else
+                <div class="table-responsive">
+                    <table class="table table-hover" id="tableActiveBorrowings">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" width="10%">Sampul</th>
+                                <th scope="col">Judul Buku</th>
+                                <th scope="col">Kode Eksemplar</th>
+                                <th scope="col">Tgl Pinjam</th>
+                                <th scope="col">Tgl Jatuh Tempo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($activeBorrowings as $borrowing)
+                                <tr class="align-middle">
+                                    <td>
+                                        <img src="{{ $borrowing->bookCopy?->book?->cover_image ? asset('storage/' . $borrowing->bookCopy->book->cover_image) : asset('assets/images/no-image-book.png') }}"
+                                            alt="{{ $borrowing->bookCopy?->book?->title ?? 'Buku' }}" class="img-thumbnail"
+                                            style="max-width: 50px; height: auto;">
+                                    </td>
+                                    <td>
+                                        {{-- Link ke detail buku di katalog --}}
+                                        <a href="{{ route('catalog.show', $borrowing->bookCopy?->book?->slug ?? '#') }}"
+                                            class="text-decoration-none text-dark fw-medium">
+                                            {{ $borrowing->bookCopy?->book?->title ?? 'Judul Tidak Diketahui' }}
+                                        </a>
+                                    </td>
+                                    <td>{{ $borrowing->bookCopy?->copy_code ?? 'N/A' }}</td>
+                                    <td>{{ $borrowing->borrow_date?->isoFormat('D MMM YYYY') ?? '-' }}</td>
+                                    {{-- Beri warna merah jika overdue --}}
+                                    <td class="{{ $borrowing->is_overdue ? 'text-danger fw-bold' : '' }}">
+                                        {{ $borrowing->due_date?->isoFormat('D MMM YYYY') ?? '-' }}
+                                        @if ($borrowing->is_overdue)
+                                            <span class="badge bg-danger ms-1">Lewat Tempo!</span>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    {{-- Bagian Riwayat Peminjaman Lampau --}}
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 fw-bold text-primary"><i class="bi bi-clock-history me-2"></i>Riwayat Peminjaman Terdahulu</h6>
+        </div>
+        <div class="card-body">
+            @if ($pastBorrowings->isEmpty())
+                <div class="alert alert-info text-center mb-0">
+                    Anda belum memiliki riwayat peminjaman.
+                </div>
+            @else
+                <div class="table-responsive">
+                    {{-- Tidak perlu datatables jika pakai pagination server-side --}}
+                    <table class="table table-hover" id="tablePastBorrowings">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Judul Buku</th>
+                                <th scope="col">Kode Eksemplar</th>
+                                <th scope="col">Tgl Pinjam</th>
+                                <th scope="col">Tgl Kembali</th>
+                                <th scope="col" class="text-center">Status Akhir</th>
+                                <th scope="col" class="text-center">Denda</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($pastBorrowings as $borrowing)
+                                <tr class="align-middle">
+                                    <td>
+                                        <a href="{{ route('catalog.show', $borrowing->bookCopy?->book?->slug ?? '#') }}"
+                                            class="text-decoration-none text-dark">
+                                            {{ $borrowing->bookCopy?->book?->title ?? 'Judul Tidak Diketahui' }}
+                                        </a>
+                                    </td>
+                                    <td>{{ $borrowing->bookCopy?->copy_code ?? 'N/A' }}</td>
+                                    <td>{{ $borrowing->borrow_date?->isoFormat('D MMM YYYY') ?? '-' }}</td>
+                                    <td>{{ $borrowing->return_date?->isoFormat('D MMM YYYY') ?? '-' }}</td>
+                                    <td class="text-center">
+                                        @if ($borrowing->status)
+                                            <span
+                                                class="badge bg-{{ $borrowing->status->badgeColor() }}">{{ $borrowing->status->label() }}</span>
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="text-center">
+                                        @if ($borrowing->fine)
+                                            Rp {{ number_format($borrowing->fine->amount, 0, ',', '.') }}
+                                            <span
+                                                class="ms-1 badge bg-{{ $borrowing->fine->status->badgeColor() }}">{{ $borrowing->fine->status->label() }}</span>
+                                            {{-- TODO: Link ke halaman 'Denda Saya' jika ada --}}
+                                            {{-- <a href="#" class="ms-1"><i class="bi bi-eye"></i></a> --}}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Tampilkan Link Pagination --}}
+                <div class="mt-3 d-flex justify-content-center">
+                    {{ $pastBorrowings->links() }}
+                </div>
+            @endif
+        </div>
+    </div>
+
+@endsection
+
+@section('css')
+    {{-- CSS tambahan jika perlu --}}
+@endsection
+
+@section('script')
+    {{-- Tidak perlu JS khusus, kecuali ingin DataTables untuk tabel aktif (tidak disarankan jika datanya sedikit) --}}
+@endsection

@@ -22,7 +22,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{-- Request::is('riwayat-pinjam*') ? 'active' : '' --}}" href="#">
+                        <a class="nav-link {{ Route::is('user.borrowings.history') ? 'active' : '' }}"
+                            href="{{ route('user.borrowings.history') }}">
                             <i class="bi bi-clock-history me-1"></i> Riwayat Pinjam
                         </a>
                     </li>

@@ -21,6 +21,7 @@ use App\Http\Controllers\User\Auth\ForgotPasswordController;
 use App\Http\Controllers\User\Auth\RegisterController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\BookController as UserBookController;
+use App\Http\Controllers\User\BorrowingController as UserBorrowingController;
 
 
 // Rute Autentikasi Admin
@@ -139,4 +140,6 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/katalog', [UserBookController::class, 'index'])->name('catalog.index');
     Route::get('/katalog/search', [UserBookController::class, 'searchApi'])->name('catalog.search.api');
     Route::get('/katalog/{book:slug}', [UserBookController::class, 'show'])->name('catalog.show');
+
+    Route::get('/riwayat-pinjam', [UserBorrowingController::class, 'history'])->name('user.borrowings.history');
 });

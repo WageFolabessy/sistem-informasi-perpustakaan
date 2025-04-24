@@ -80,7 +80,7 @@
 
                 @guest('web')
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link" href="{{ route('catalog.index') }}">
                             <i class="bi bi-search me-1"></i> Katalog Buku
                         </a>
                     </li>

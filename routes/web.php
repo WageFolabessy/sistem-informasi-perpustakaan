@@ -138,13 +138,13 @@ Route::middleware('auth:web')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/', [UserDashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/katalog', [UserBookController::class, 'index'])->name('catalog.index');
-    Route::get('/katalog/search', [UserBookController::class, 'searchApi'])->name('catalog.search.api');
-    Route::get('/katalog/{book:slug}', [UserBookController::class, 'show'])->name('catalog.show');
-
+    
     Route::get('/riwayat-pinjam', [UserBorrowingController::class, 'history'])->name('user.borrowings.history');
-
+    
     Route::get('/booking-saya', [UserBookingController::class, 'index'])->name('user.bookings.index');
     Route::post('/booking/{book}', [UserBookingController::class, 'store'])->name('user.bookings.store');
     Route::delete('/booking-saya/{booking}/cancel', [UserBookingController::class, 'cancel'])->name('user.bookings.cancel');
 });
+Route::get('/katalog', [UserBookController::class, 'index'])->name('catalog.index');
+Route::get('/katalog/search', [UserBookController::class, 'searchApi'])->name('catalog.search.api');
+Route::get('/katalog/{book:slug}', [UserBookController::class, 'show'])->name('catalog.show');

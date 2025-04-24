@@ -22,6 +22,7 @@ use App\Http\Controllers\User\Auth\RegisterController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\BookController as UserBookController;
 use App\Http\Controllers\User\BorrowingController as UserBorrowingController;
+use App\Http\Controllers\User\BookingController as UserBookingController;
 
 
 // Rute Autentikasi Admin
@@ -142,4 +143,8 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/katalog/{book:slug}', [UserBookController::class, 'show'])->name('catalog.show');
 
     Route::get('/riwayat-pinjam', [UserBorrowingController::class, 'history'])->name('user.borrowings.history');
+
+    Route::get('/booking-saya', [UserBookingController::class, 'index'])->name('user.bookings.index');
+    Route::post('/booking/{book}', [UserBookingController::class, 'store'])->name('user.bookings.store');
+    Route::delete('/booking-saya/{booking}/cancel', [UserBookingController::class, 'cancel'])->name('user.bookings.cancel');
 });

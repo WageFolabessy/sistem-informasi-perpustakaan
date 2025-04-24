@@ -66,7 +66,12 @@ class SettingSeeder extends Seeder
                 'key' => 'lost_book_fee',
                 'value' => '75000',
                 'description' => 'Biaya penggantian/denda tetap untuk buku yang hilang (Rp). Isi 0 jika tidak ada.'
-            ]
+            ],
+            [
+                'key' => 'max_active_bookings',
+                'value' => '2',
+                'description' => 'Jumlah maksimal booking aktif yang boleh dimiliki siswa secara bersamaan.',
+            ],
             // Tambahkan pengaturan lain jika ada, misalnya:
             // [
             //     'key' => 'lost_book_fee_percentage',

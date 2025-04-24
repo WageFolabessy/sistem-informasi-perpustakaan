@@ -10,7 +10,7 @@
     <div class="row">
 
         <div class="col-lg-3 col-md-6 mb-4">
-            <a href="#" class="text-decoration-none">
+            <a href="{{ route('user.bookings.index') }}" class="text-decoration-none">
                 <div class="card border-start border-warning border-4 shadow h-100 py-2">
                     <div class="card-body">
                         <div class="row g-0 align-items-center">
@@ -134,7 +134,7 @@
             @endif
         </div>
         <div class="card-footer text-center">
-            <a href="#">Lihat Semua Riwayat Peminjaman</a>
+            <a href="{{ route('user.borrowings.history') }}">Lihat Semua Riwayat Peminjaman</a>
         </div>
     </div>
 
@@ -173,7 +173,7 @@
             @endif
         </div>
         <div class="card-footer text-center">
-            <a href="#">Lihat Semua Booking</a>
+            <a href="{{ route('user.bookings.index') }}">Lihat Semua Booking</a>
         </div>
     </div>
 

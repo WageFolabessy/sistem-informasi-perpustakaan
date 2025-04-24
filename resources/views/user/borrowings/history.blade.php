@@ -105,7 +105,7 @@
                                             Rp {{ number_format($borrowing->fine->amount, 0, ',', '.') }}
                                             <span
                                                 class="ms-1 badge bg-{{ $borrowing->fine->status->badgeColor() }}">{{ $borrowing->fine->status->label() }}</span>
-                                            {{-- <a href="#" class="ms-1"><i class="bi bi-eye"></i></a> --}}
+                                            <a href="#" class="ms-1"><i class="bi bi-eye"></i></a>
                                         @else
                                             -
                                         @endif

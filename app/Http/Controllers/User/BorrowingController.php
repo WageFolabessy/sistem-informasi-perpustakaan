@@ -35,7 +35,7 @@ class BorrowingController extends Controller
             ->with([
                 'bookCopy:id,copy_code,book_id',
                 'bookCopy.book:id,slug,title',
-                'fine:id,amount,status'
+                'fine'
             ])
             ->orderBy('return_date', 'desc')
             ->paginate(10);

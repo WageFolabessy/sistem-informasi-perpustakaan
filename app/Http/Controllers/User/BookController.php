@@ -9,6 +9,9 @@ use App\Enum\BookCopyStatus;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
+use App\Enum\BorrowingStatus;
+use App\Enum\BookingStatus;
+use Illuminate\Support\Facades\Auth;
 
 class BookController extends Controller
 {
@@ -50,9 +53,60 @@ class BookController extends Controller
         $book->load(['author', 'publisher', 'category', 'copies']);
 
         $totalCopies = $book->copies->count();
-        $availableCopies = $book->copies->where('status', BookCopyStatus::Available)->count();
+        $availableCopiesCount = $book->copies->where('status', BookCopyStatus::Available)->count();
 
-        return view('user.books.show', compact('book', 'totalCopies', 'availableCopies'));
+        $userStatus = null;
+        $statusDetails = null;
+        $user = Auth::user();
+
+        if ($user && $user->is_active) {
+            $activeLoan = $user->borrowings()
+                ->whereIn('status', [BorrowingStatus::Borrowed, BorrowingStatus::Overdue])
+                ->whereHas('bookCopy', fn($q) => $q->where('book_id', $book->id))
+                ->first(['id', 'due_date']);
+            if ($activeLoan) {
+                $userStatus = 'borrowing';
+                $statusDetails = $activeLoan->due_date;
+            } else {
+                $activeBooking = $user->bookings()
+                    ->where('book_id', $book->id)
+                    ->where('status', BookingStatus::Active)
+                    ->first(['id', 'expiry_date']);
+                if ($activeBooking) {
+                    $userStatus = 'booked';
+                    $statusDetails = $activeBooking->expiry_date;
+                } else {
+                    if ($totalCopies <= 0) {
+                        $userStatus = 'unavailable';
+                        $statusDetails = 'Tidak ada eksemplar terdaftar untuk buku ini.';
+                    } elseif ($availableCopiesCount <= 0) {
+                        $userStatus = 'unavailable';
+                        $statusDetails = 'Stok semua eksemplar sedang dipinjam atau dibooking.';
+                    } else {
+                        $maxBookings = (int) setting('max_active_bookings', 2);
+                        $currentActiveBookings = $user->bookings()->where('status', BookingStatus::Active)->count();
+                        if ($currentActiveBookings >= $maxBookings) {
+                            $userStatus = 'limit_reached';
+                            $statusDetails = $maxBookings;
+                        } else {
+                            $userStatus = 'can_book';
+                        }
+                    }
+                }
+            }
+        } elseif ($user && !$user->is_active) {
+            $userStatus = 'inactive';
+        } else {
+            $userStatus = 'guest';
+        }
+
+        return view('user.books.show', compact(
+            'book',
+            'totalCopies',
+            'availableCopiesCount',
+            'userStatus',
+            'statusDetails'
+        ));
     }
 
     public function searchApi(Request $request): JsonResponse

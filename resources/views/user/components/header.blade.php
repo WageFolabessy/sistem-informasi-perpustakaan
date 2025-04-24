@@ -28,7 +28,8 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {{-- Request::is('booking-saya*') ? 'active' : '' --}}" href="#">
+                        <a class="nav-link {{ Route::is('user.bookings.index') ? 'active' : '' }}"
+                            href="{{ route('user.bookings.index') }}">
                             <i class="bi bi-journal-bookmark-fill me-1"></i> Booking Saya
                         </a>
                     </li>

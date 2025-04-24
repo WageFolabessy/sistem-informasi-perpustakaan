@@ -24,6 +24,7 @@ class UpdateSettingsRequest extends FormRequest
             'settings.library_address' => ['nullable', 'string'],
             'settings.max_fine_amount' => ['required', 'integer', 'min:0'],
             'settings.lost_book_fee' => ['required', 'integer', 'min:0'],
+            'settings.max_active_bookings' => ['required', 'integer', 'min:1'],
             'settings.*' => ['nullable', 'string'],
         ];
     }
@@ -60,6 +61,10 @@ class UpdateSettingsRequest extends FormRequest
             'settings.lost_book_fee.required' => 'Biaya Buku Hilang wajib diisi.',
             'settings.lost_book_fee.integer' => 'Biaya Buku Hilang harus angka.',
             'settings.lost_book_fee.min' => 'Biaya Buku Hilang tidak boleh negatif.',
+
+            'settings.max_active_bookings.required' => 'Batas Booking Aktif wajib diisi.',
+            'settings.max_active_bookings.integer' => 'Batas Booking Aktif harus angka.',
+            'settings.max_active_bookings.min' => 'Batas Booking Aktif minimal 1.',
         ];
     }
 }

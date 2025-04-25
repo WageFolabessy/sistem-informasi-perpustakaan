@@ -37,15 +37,62 @@
                     <li class="nav-item d-none d-lg-block mx-2 border-end" style="height: 20px;"></li>
 
                     <li class="nav-item dropdown">
+                        @php
+                            $unreadNotifications = Auth::user()->unreadNotifications()->take(5)->get(); // Ambil 5 terbaru yg belum dibaca
+                            $unreadCount = Auth::user()->unreadNotifications()->count();
+                        @endphp
                         <a class="nav-link" href="#" id="notificationDropdown" role="button"
                             data-bs-toggle="dropdown" aria-expanded="false" title="Notifikasi">
                             <i class="bi bi-bell-fill position-relative fs-5">
-                                {{-- Badge Notifikasi --}}
+                                @if ($unreadCount > 0)
+                                    <span
+                                        class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                                        style="font-size: 0.65em;">
+                                        {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                                        <span class="visually-hidden">unread messages</span>
+                                    </span>
+                                @endif
                             </i>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
-                            <li><a class="dropdown-item disabled" href="#"><small>Belum ada notifikasi</small></a>
+                            <li class="dropdown-header text-center fw-bold">Notifikasi Belum Dibaca</li>
+                            <li>
+                                <hr class="dropdown-divider">
                             </li>
+
+                            @forelse ($unreadNotifications as $notification)
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-start small"
+                                        href="{{ route('user.notifications.read', $notification->id) }}"
+                                        onclick="event.preventDefault(); document.getElementById('mark-as-read-{{ $notification->id }}').submit();">
+                                        <form id="mark-as-read-{{ $notification->id }}"
+                                            action="{{ route('user.notifications.read', $notification->id) }}"
+                                            method="POST" class="d-none">
+                                            @csrf
+                                            @method('PATCH')
+                                        </form>
+                                        <i
+                                            class="bi {{ $notification->data['icon'] ?? 'bi-info-circle' }} text-primary mt-1 me-2"></i>
+                                        <div>
+                                            <div>{{ $notification->data['message'] ?? 'Notifikasi baru.' }}</div>
+                                            <div class="text-muted" style="font-size: 0.8em;">
+                                                {{ $notification->created_at->diffForHumans() }}</div>
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                            @empty
+                                <li><a class="dropdown-item text-center text-muted disabled" href="#">Tidak ada
+                                        notifikasi baru</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                            @endforelse
+
+                            <li><a class="dropdown-item text-center text-primary fw-bold"
+                                    href="{{ route('user.notifications.index') }}">Lihat Semua Notifikasi</a></li>
                         </ul>
                     </li>
 

@@ -27,6 +27,7 @@ use App\Http\Controllers\User\BorrowingController as UserBorrowingController;
 use App\Http\Controllers\User\BookingController as UserBookingController;
 use App\Http\Controllers\User\FineController as UserFineController;
 use App\Http\Controllers\User\ProfileController as UserProfileController;
+use App\Http\Controllers\User\NotificationController as UserNotificationController;
 
 
 // Rute Autentikasi Admin
@@ -154,6 +155,10 @@ Route::middleware('auth:web')->group(function () {
 
     Route::get('/profil-saya', [UserProfileController::class, 'edit'])->name('user.profile.edit');
     Route::patch('/profil-saya', [UserProfileController::class, 'update'])->name('user.profile.update');
+
+    Route::get('/notifikasi', [UserNotificationController::class, 'index'])->name('user.notifications.index');
+    Route::patch('/notifikasi/{notificationId}/read', [UserNotificationController::class, 'markAsRead'])->name('user.notifications.read');
+    Route::post('/notifikasi/read-all', [UserNotificationController::class, 'markAllAsRead'])->name('user.notifications.readall');
 });
 
 Route::get('/katalog', [UserBookController::class, 'index'])->name('catalog.index');

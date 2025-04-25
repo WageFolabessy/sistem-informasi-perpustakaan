@@ -71,7 +71,7 @@
                                                 <button type="button" class="btn btn-success" title="Tandai Lunas"
                                                     data-bs-toggle="modal" data-bs-target="#payModal-{{ $fine->id }}">
 
-                                                    <i class="bi bi-slash-circle"></i> Bebaskan
+                                                    <i class="bi bi-cash-coin"></i> Bayar
                                                 </button>
                                             </div>
                                         @elseif($fine->status === App\Enum\FineStatus::Paid || $fine->status === App\Enum\FineStatus::Waived)

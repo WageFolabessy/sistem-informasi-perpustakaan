@@ -60,6 +60,11 @@ class Borrowing extends Model
         return $this->hasOne(Fine::class);
     }
 
+    public function lostReport(): HasOne
+    {
+        return $this->hasOne(LostReport::class, 'borrowing_id');
+    }
+
     public function scopeActive($query)
     {
         return $query->whereIn('status', [BorrowingStatus::Borrowed, BorrowingStatus::Overdue]);

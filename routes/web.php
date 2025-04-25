@@ -144,6 +144,7 @@ Route::middleware('auth:web')->group(function () {
 
 
     Route::get('/riwayat-pinjam', [UserBorrowingController::class, 'history'])->name('user.borrowings.history');
+    Route::post('/riwayat-pinjam/{borrowing}/report-lost', [UserBorrowingController::class, 'reportLost'])->name('user.borrowings.report-lost');
 
     Route::get('/booking-saya', [UserBookingController::class, 'index'])->name('user.bookings.index');
     Route::post('/booking/{book}', [UserBookingController::class, 'store'])->name('user.bookings.store');
@@ -154,6 +155,7 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/profil-saya', [UserProfileController::class, 'edit'])->name('user.profile.edit');
     Route::patch('/profil-saya', [UserProfileController::class, 'update'])->name('user.profile.update');
 });
+
 Route::get('/katalog', [UserBookController::class, 'index'])->name('catalog.index');
 Route::get('/katalog/search', [UserBookController::class, 'searchApi'])->name('catalog.search.api');
 Route::get('/katalog/{book:slug}', [UserBookController::class, 'show'])->name('catalog.show');

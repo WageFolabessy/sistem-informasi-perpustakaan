@@ -11,6 +11,9 @@
             </h6>
         </div>
         <div class="card-body">
+            @include('admin.components.flash_messages')
+            @include('admin.components.validation_errors')
+
             @if ($activeBorrowings->isEmpty())
                 <div class="alert alert-info text-center mb-0">
                     Anda sedang tidak meminjam buku.
@@ -25,6 +28,7 @@
                                 <th scope="col">Kode Eksemplar</th>
                                 <th scope="col">Tgl Pinjam</th>
                                 <th scope="col">Tgl Jatuh Tempo</th>
+                                <th scope="col" class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -42,11 +46,26 @@
                                         </a>
                                     </td>
                                     <td>{{ $borrowing->bookCopy?->copy_code ?? 'N/A' }}</td>
-                                    <td>{{ $borrowing->borrow_date?->isoFormat('D MMM YYYY') ?? '-' }}</td>
+                                    <td>{{ $borrowing->borrow_date?->isoFormat('D MM YYYY') ?? '-' }}</td>
                                     <td class="{{ $borrowing->is_overdue ? 'text-danger fw-bold' : '' }}">
                                         {{ $borrowing->due_date?->isoFormat('D MMM YYYY') ?? '-' }}
                                         @if ($borrowing->is_overdue)
                                             <span class="badge bg-danger ms-1">Lewat Tempo!</span>
+                                        @endif
+                                    </td>
+                                    <td class="text-center action-column">
+                                        @if ($borrowing->lost_report_exists)
+                                            <span class="text-muted fst-italic"
+                                                title="Laporan kehilangan untuk buku ini sudah dibuat.">
+                                                <i class="bi bi-check-circle-fill text-success me-1"></i> Sudah Dilaporkan Hilang
+                                            </span>
+                                        @else
+                                            <button type="button" class="btn btn-outline-danger btn-sm"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#reportLostModal-{{ $borrowing->id }}"
+                                                title="Laporkan Buku Hilang">
+                                                <i class="bi bi-exclamation-triangle"></i> Laporkan Hilang
+                                            </button>
                                         @endif
                                     </td>
                                 </tr>
@@ -59,14 +78,8 @@
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 fw-bold text-primary"><i class="bi bi-clock-history me-2"></i>Riwayat Peminjaman Terdahulu</h6>
-        </div>
         <div class="card-body">
             @if ($pastBorrowings->isEmpty())
-                <div class="alert alert-info text-center mb-0">
-                    Anda belum memiliki riwayat peminjaman.
-                </div>
             @else
                 <div class="table-responsive">
                     <table class="table table-hover" id="tablePastBorrowings">
@@ -90,7 +103,7 @@
                                         </a>
                                     </td>
                                     <td>{{ $borrowing->bookCopy?->copy_code ?? 'N/A' }}</td>
-                                    <td>{{ $borrowing->borrow_date?->isoFormat('D MMM YYYY') ?? '-' }}</td>
+                                    <td>{{ $borrowing->borrow_date?->isoFormat('D MM YYYY') ?? '-' }}</td>
                                     <td>{{ $borrowing->return_date?->isoFormat('D MMM YYYY') ?? '-' }}</td>
                                     <td class="text-center">
                                         @if ($borrowing->status)
@@ -105,7 +118,6 @@
                                             Rp {{ number_format($borrowing->fine->amount, 0, ',', '.') }}
                                             <span
                                                 class="ms-1 badge bg-{{ $borrowing->fine->status->badgeColor() }}">{{ $borrowing->fine->status->label() }}</span>
-
                                             @if (!empty($borrowing->fine->notes))
                                                 <button type="button" class="btn btn-xs btn-outline-secondary ms-1"
                                                     data-bs-toggle="modal"
@@ -113,10 +125,6 @@
                                                     title="Lihat Catatan Denda">
                                                     <i class="bi bi-chat-left-text"></i>
                                                 </button>
-                                            @endif
-                                            @if ($borrowing->fine->status == App\Enum\FineStatus::Unpaid)
-                                                <a href="#" class="btn btn-xs btn-warning ms-1"
-                                                    title="Lihat Detail Denda"><i class="bi bi-cash-coin"></i></a>
                                             @endif
                                         @else
                                             -
@@ -127,16 +135,13 @@
                         </tbody>
                     </table>
                 </div>
-
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <div>
-                        @if ($pastBorrowings->total() > 0)
-                            <small class="text-muted">
-                                Menampilkan {{ $pastBorrowings->firstItem() }}
-                                hingga {{ $pastBorrowings->lastItem() }}
-                                dari {{ $pastBorrowings->total() }} riwayat
-                            </small>
-                        @endif
+                        <small class="text-muted">
+                            Menampilkan {{ $pastBorrowings->firstItem() }}
+                            hingga {{ $pastBorrowings->lastItem() }}
+                            dari {{ $pastBorrowings->total() }} hasil
+                        </small>
                     </div>
                     <div>
                         {{ $pastBorrowings->links('vendor.pagination.bootstrap-5') }}
@@ -145,6 +150,7 @@
             @endif
         </div>
     </div>
+
 
     @foreach ($pastBorrowings as $borrowing)
         @if ($borrowing->fine && !empty($borrowing->fine->notes))
@@ -160,9 +166,16 @@
                         </div>
                         <div class="modal-body">
                             <p><strong>Buku:</strong> {{ $borrowing->bookCopy?->book?->title ?? 'N/A' }}
-                                ({{ $borrowing->bookCopy?->copy_code ?? 'N/A' }})
-                            </p>
+                                ({{ $borrowing->bookCopy?->copy_code ?? 'N/A' }})</p>
                             <p><strong>Jumlah Denda:</strong> Rp {{ number_format($borrowing->fine->amount, 0, ',', '.') }}
+                            </p>
+                            <p><strong>Status:</strong>
+                                @if ($borrowing->fine->status)
+                                    <span
+                                        class="badge bg-{{ $borrowing->fine->status->badgeColor() }}">{{ $borrowing->fine->status->label() }}</span>
+                                @else
+                                    -
+                                @endif
                             </p>
                             <hr>
                             <p><strong>Catatan:</strong></p>
@@ -177,6 +190,45 @@
         @endif
     @endforeach
 
+    @foreach ($activeBorrowings as $borrowing)
+        <div class="modal fade" id="reportLostModal-{{ $borrowing->id }}" tabindex="-1"
+            aria-labelledby="reportLostModalLabel-{{ $borrowing->id }}" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <form action="{{ route('user.borrowings.report-lost', $borrowing) }}" method="POST">
+                    @csrf
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="reportLostModalLabel-{{ $borrowing->id }}">
+                                <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Konfirmasi Laporan
+                                Kehilangan
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Apakah Anda yakin ingin melaporkan buku berikut sebagai **hilang**?</p>
+                            <ul>
+                                <li>Judul: <strong>{{ $borrowing->bookCopy?->book?->title ?? 'N/A' }}</strong></li>
+                                <li>Kode Eksemplar: <strong>{{ $borrowing->bookCopy?->copy_code ?? 'N/A' }}</strong></li>
+                                <li>Dipinjam Tanggal:
+                                    <strong>{{ $borrowing->borrow_date?->isoFormat('D MMM YYYY') ?? '-' }}</strong>
+                                </li>
+                            </ul>
+                            <p class="text-danger small">
+                                Melaporkan buku hilang akan diteruskan ke petugas perpustakaan untuk diproses lebih lanjut.
+                                Mungkin akan ada konsekuensi denda penggantian sesuai aturan yang berlaku.
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-danger">Ya, Laporkan Hilang</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    @endforeach
+
 @endsection
 
 @section('css')
@@ -185,6 +237,12 @@
             --bs-btn-padding-y: .1rem;
             --bs-btn-padding-x: .3rem;
             --bs-btn-font-size: .75rem;
+        }
+
+        .action-column {
+            white-space: nowrap;
+            width: 1%;
+            text-align: center;
         }
     </style>
 @endsection

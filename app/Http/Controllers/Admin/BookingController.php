@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Events\BookingCancelledByAdmin;
+use App\Events\BookingConvertedToLoan;
 use App\Http\Controllers\Controller;
 use App\Models\Booking;
 use App\Models\Book;
@@ -78,6 +80,7 @@ class BookingController extends Controller
             }
 
             DB::commit();
+            event(new BookingCancelledByAdmin($booking));
             return redirect()->route('admin.bookings.index')->with('success', 'Booking berhasil dibatalkan.');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -134,6 +137,7 @@ class BookingController extends Controller
             $bookCopy->save();
 
             DB::commit();
+            event(new BookingConvertedToLoan($booking));
 
             return redirect()->route('admin.borrowings.index')
                 ->with('success', 'Booking berhasil dikonversi menjadi peminjaman untuk eksemplar: ' . $bookCopy->copy_code);

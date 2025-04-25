@@ -9,6 +9,7 @@ use App\Enum\LostReportStatus;
 use App\Enum\BorrowingStatus;
 use App\Enum\BookCopyStatus;
 use App\Enum\FineStatus;
+use App\Events\LostReportResolved;
 use App\Http\Requests\Admin\VerifyLostReportRequest;
 use App\Http\Requests\Admin\ResolveLostReportRequest;
 use Illuminate\Http\Request;
@@ -124,6 +125,7 @@ class LostReportController extends Controller
             }
 
             DB::commit();
+            event(new LostReportResolved($lost_report));
             return redirect()->route('admin.lost-reports.show', $lost_report)
                 ->with('success', 'Laporan kehilangan berhasil diselesaikan (resolved).');
         } catch (\Exception $e) {

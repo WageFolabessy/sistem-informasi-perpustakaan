@@ -117,22 +117,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 // --- Rute Autentikasi Siswa ---
 Route::middleware('guest:web')->group(function () {
-    // Login
+    // --- Login ---
     Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('login', [LoginController::class, 'login']);
 
-    // Register
+    // --- Register --- 
     Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
     Route::post('register', [RegisterController::class, 'register']);
 
-    // Forgot Password
+    // --- Forgot Password ---
     Route::get('forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
     Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
 
-    // Reset Password
+    // --- Reset Password --- 
     Route::get('reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
     Route::post('reset-password', [ResetPasswordController::class, 'reset'])->name('password.update');
 
+    // --- Menunggu Aktivasi Akun --- 
     Route::get('/register/pending', function () {
         return view('user.auth.pending');
     })->name('register.pending');
@@ -143,24 +144,29 @@ Route::middleware('auth:web')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/', [UserDashboardController::class, 'index'])->name('dashboard');
 
-
+    // --- Riwayat Peminjaman --- 
     Route::get('/riwayat-pinjam', [UserBorrowingController::class, 'history'])->name('user.borrowings.history');
     Route::post('/riwayat-pinjam/{borrowing}/report-lost', [UserBorrowingController::class, 'reportLost'])->name('user.borrowings.report-lost');
 
+    // --- Bookingan saya ---
     Route::get('/booking-saya', [UserBookingController::class, 'index'])->name('user.bookings.index');
     Route::post('/booking/{book}', [UserBookingController::class, 'store'])->name('user.bookings.store');
     Route::delete('/booking-saya/{booking}/cancel', [UserBookingController::class, 'cancel'])->name('user.bookings.cancel');
 
+    // --- Denda Saya ---
     Route::get('/denda-saya', [UserFineController::class, 'index'])->name('user.fines.index');
 
+    // --- Profil Saya ---
     Route::get('/profil-saya', [UserProfileController::class, 'edit'])->name('user.profile.edit');
     Route::patch('/profil-saya', [UserProfileController::class, 'update'])->name('user.profile.update');
 
+    // --- Notifikasi ---
     Route::get('/notifikasi', [UserNotificationController::class, 'index'])->name('user.notifications.index');
     Route::patch('/notifikasi/{notificationId}/read', [UserNotificationController::class, 'markAsRead'])->name('user.notifications.read');
     Route::post('/notifikasi/read-all', [UserNotificationController::class, 'markAllAsRead'])->name('user.notifications.readall');
 });
 
+// --- Katalog Buku ---
 Route::get('/katalog', [UserBookController::class, 'index'])->name('catalog.index');
 Route::get('/katalog/search', [UserBookController::class, 'searchApi'])->name('catalog.search.api');
 Route::get('/katalog/{book:slug}', [UserBookController::class, 'show'])->name('catalog.show');

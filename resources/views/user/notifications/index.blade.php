@@ -27,7 +27,6 @@
             @else
                 <div class="list-group list-group-flush">
                     @foreach ($notifications as $notification)
-                        {{-- Beri background berbeda untuk yg belum dibaca --}}
                         <div
                             class="list-group-item list-group-item-action px-0 py-3 {{ $notification->read() ? '' : 'bg-light fw-bold' }}">
                             <div class="row g-2 align-items-center">
@@ -57,7 +56,8 @@
                                         </form>
                                     @endif
                                     @isset($notification->data['link'])
-                                        <a href="{{ $notification->data['link'] }}" class="btn btn-sm btn-outline-info" title="Lihat Detail">
+                                        <a href="{{ $notification->data['link'] }}" class="btn btn-sm btn-outline-info"
+                                            title="Lihat Detail">
                                             <i class="bi bi-box-arrow-up-right"></i>
                                         </a>
                                     @endisset
@@ -86,14 +86,11 @@
 
 @section('css')
     <style>
-        /* Styling tambahan jika perlu */
         .list-group-item.bg-light {
-            /* Sedikit lebih jelas */
             background-color: #f8f9fc !important;
         }
     </style>
 @endsection
 
 @section('script')
-    {{-- Tidak perlu JS khusus untuk saat ini --}}
 @endsection

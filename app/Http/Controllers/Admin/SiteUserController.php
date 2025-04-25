@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enum\BorrowingStatus;
+use App\Events\UserAccountActivated;
 use App\Http\Controllers\Controller;
 use App\Models\SiteUser;
 use App\Http\Requests\Admin\StoreSiteUserRequest;
@@ -121,6 +122,9 @@ class SiteUserController extends Controller
         if (!$siteUser->is_active) {
             $siteUser->is_active = true;
             $siteUser->save();
+
+            event(new UserAccountActivated($siteUser));
+
             return redirect()->route('admin.site-users.pending')
                 ->with('success', 'Akun siswa ' . $siteUser->name . ' berhasil diaktifkan.');
         }

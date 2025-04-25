@@ -56,7 +56,8 @@
                             <span class="d-none d-lg-inline">{{ Auth::user()->name }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item {{-- Request::is('profil*') ? 'active' : '' --}}" href="#">
+                            <li><a class="dropdown-item {{ Route::is('user.profile.edit') ? 'active' : '' }}"
+                                    href="{{ route('user.profile.edit') }}">
                                     <i class="bi bi-person-lines-fill"></i> Profil Saya</a>
                             </li>
                             <li><a class="dropdown-item {{ Route::is('user.fines.index') ? 'active' : '' }}"

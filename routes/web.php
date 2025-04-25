@@ -1,8 +1,10 @@
 <?php
 
+// --- Admin ---
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AuthorController;
-use App\Http\Controllers\Admin\BookController as AdminBookController;
+use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\BorrowingController;
 use App\Http\Controllers\Admin\CategoryController;
@@ -11,12 +13,12 @@ use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\PublisherController;
 use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SiteUserController;
-use App\Http\Controllers\User\Auth\LoginController;
-use App\Http\Controllers\User\Auth\ResetPasswordController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthenticatedSessionController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\LostReportController;
+// --- Siswa ---
+use App\Http\Controllers\User\Auth\ResetPasswordController;
+use App\Http\Controllers\User\Auth\LoginController;
 use App\Http\Controllers\User\Auth\ForgotPasswordController;
 use App\Http\Controllers\User\Auth\RegisterController;
 use App\Http\Controllers\User\DashboardController as UserDashboardController;
@@ -24,6 +26,7 @@ use App\Http\Controllers\User\BookController as UserBookController;
 use App\Http\Controllers\User\BorrowingController as UserBorrowingController;
 use App\Http\Controllers\User\BookingController as UserBookingController;
 use App\Http\Controllers\User\FineController as UserFineController;
+use App\Http\Controllers\User\ProfileController as UserProfileController;
 
 
 // Rute Autentikasi Admin
@@ -40,16 +43,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
             ->name('logout');
 
-        Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
         // --- Manajemen Buku ---
         Route::resource('categories', CategoryController::class);
         Route::resource('authors', AuthorController::class);
         Route::resource('publishers', PublisherController::class);
-        Route::resource('books', AdminBookController::class);
-        Route::post('books/{book}/copies', [AdminBookController::class, 'storeCopy'])->name('books.copies.store');
-        Route::delete('book-copies/{copy}', [AdminBookController::class, 'destroyCopy'])->name('book-copies.destroy');
-        Route::put('book-copies/{copy}', [AdminBookController::class, 'updateCopy'])->name('book-copies.update');
+        Route::resource('books', BookController::class);
+        Route::post('books/{book}/copies', [BookController::class, 'storeCopy'])->name('books.copies.store');
+        Route::delete('book-copies/{copy}', [BookController::class, 'destroyCopy'])->name('book-copies.destroy');
+        Route::put('book-copies/{copy}', [BookController::class, 'updateCopy'])->name('book-copies.update');
 
         // --- Manajemen Siswa ---
         Route::get('site-users/pending', [SiteUserController::class, 'pendingRegistrations'])->name('site-users.pending');
@@ -139,14 +142,17 @@ Route::middleware('auth:web')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/', [UserDashboardController::class, 'index'])->name('dashboard');
 
-    
+
     Route::get('/riwayat-pinjam', [UserBorrowingController::class, 'history'])->name('user.borrowings.history');
-    
+
     Route::get('/booking-saya', [UserBookingController::class, 'index'])->name('user.bookings.index');
     Route::post('/booking/{book}', [UserBookingController::class, 'store'])->name('user.bookings.store');
     Route::delete('/booking-saya/{booking}/cancel', [UserBookingController::class, 'cancel'])->name('user.bookings.cancel');
 
     Route::get('/denda-saya', [UserFineController::class, 'index'])->name('user.fines.index');
+
+    Route::get('/profil-saya', [UserProfileController::class, 'edit'])->name('user.profile.edit');
+    Route::patch('/profil-saya', [UserProfileController::class, 'update'])->name('user.profile.update');
 });
 Route::get('/katalog', [UserBookController::class, 'index'])->name('catalog.index');
 Route::get('/katalog/search', [UserBookController::class, 'searchApi'])->name('catalog.search.api');

@@ -57,39 +57,50 @@ class BookingController extends Controller
 
         DB::beginTransaction();
         try {
-            $booking->status = BookingStatus::Cancelled;
+            $bookCopy = $booking->bookCopy;
 
-            $cancelReason = "Dibatalkan oleh admin: " . Auth::guard('admin')->user()->name . " pada " . now()->isoFormat('D MMM YYYY, HH:mm');
+            $booking->status = BookingStatus::Cancelled;
+            $cancelReason = "Dibatalkan oleh admin: " . Auth::guard('admin')->user()->name . " pada " . now()->isoFormat('D MM YYYY, HH:mm');
             if (!empty($adminNotes)) {
                 $cancelReason .= "\nCatatan: " . trim($adminNotes);
             }
             $booking->notes = trim(($booking->notes ? $booking->notes . "\n\n---\n\n" : '') . $cancelReason);
-
             $booking->save();
+
+            if ($bookCopy && $bookCopy->status === BookCopyStatus::Booked) {
+                $bookCopy->status = BookCopyStatus::Available;
+                $bookCopy->save();
+                Log::info("BookCopy ID {$bookCopy->id} status set to Available due to Booking ID {$booking->id} cancellation by admin.");
+            } elseif ($bookCopy && $bookCopy->status !== BookCopyStatus::Booked) {
+                Log::warning("Booking ID {$booking->id} cancelled by admin, but related BookCopy ID {$bookCopy->id} status was {$bookCopy->status->value}, not 'Booked'. Status not changed back.");
+            } else if (!$bookCopy && $booking->book_copy_id) {
+                Log::warning("Booking ID {$booking->id} cancelled by admin, has book_copy_id {$booking->book_copy_id} but relation failed to load.");
+            }
 
             DB::commit();
             return redirect()->route('admin.bookings.index')->with('success', 'Booking berhasil dibatalkan.');
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error("Error cancelling Booking ID: {$booking->id} - " . $e->getMessage());
+            Log::error("Error admin cancelling Booking ID: {$booking->id} - " . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal membatalkan booking: Terjadi kesalahan sistem.');
         }
     }
 
     public function convert(ConvertBookingRequest $request, Booking $booking): RedirectResponse
     {
-        $validated = $request->validated();
-        $bookCopyId = $validated['book_copy_id'];
-        $adminNotes = $validated['admin_notes'] ?? null;
-        $bookCopy = BookCopy::find($bookCopyId);
+        $bookCopy = $booking->bookCopy;
         $student = $booking->siteUser;
 
-        if (!$bookCopy || $bookCopy->book_id !== $booking->book_id || $bookCopy->status !== BookCopyStatus::Available) {
-            return redirect()->back()->with('error', 'Eksemplar buku tidak valid atau tidak tersedia.');
+        if (!$bookCopy) {
+            return redirect()->back()->with('error', 'Eksemplar buku yang terkait dengan booking ini tidak ditemukan.');
+        }
+        if (!in_array($bookCopy->status, [BookCopyStatus::Booked, BookCopyStatus::Available])) {
+            return redirect()->back()->with('error', 'Eksemplar buku ini sedang tidak dalam status bisa dipinjamkan (Status: ' . $bookCopy->status->label() . ').');
         }
         if (!$student || !$student->is_active) {
             return redirect()->back()->with('error', 'Siswa pemesan tidak ditemukan atau tidak aktif.');
         }
+
         $maxLoanBooks = (int) setting('max_loan_books', 2);
         $activeLoansCount = $student->borrowings()
             ->whereIn('status', [BorrowingStatus::Borrowed, BorrowingStatus::Overdue])
@@ -98,12 +109,12 @@ class BookingController extends Controller
             return redirect()->back()->with('error', "Siswa telah mencapai batas maksimal peminjaman ({$maxLoanBooks} buku).");
         }
 
-
         DB::beginTransaction();
         try {
             $borrowDate = Carbon::now()->startOfDay();
             $loanDuration = (int) setting('loan_duration', 7);
             $dueDate = $borrowDate->copy()->addDays($loanDuration);
+
             Borrowing::create([
                 'site_user_id' => $student->id,
                 'book_copy_id' => $bookCopy->id,
@@ -115,10 +126,7 @@ class BookingController extends Controller
             ]);
 
             $booking->status = BookingStatus::ConvertedToLoan;
-            $conversionNote = "Dikonversi ke peminjaman oleh admin: " . Auth::guard('admin')->user()->name . " pada " . now()->isoFormat('D MMM YYYY, HH:mm') . " (Eksemplar: {$bookCopy->copy_code})";
-            if (!empty($adminNotes)) {
-                $conversionNote .= "\nCatatan Admin: " . trim($adminNotes);
-            }
+            $conversionNote = "Dikonversi ke peminjaman oleh admin: " . Auth::guard('admin')->user()->name . " pada " . now()->isoFormat('D MM YYYY, HH:mm') . " (Eksemplar: {$bookCopy->copy_code})";
             $booking->notes = trim(($booking->notes ? $booking->notes . "\n\n---\n\n" : '') . $conversionNote);
             $booking->save();
 
@@ -128,7 +136,7 @@ class BookingController extends Controller
             DB::commit();
 
             return redirect()->route('admin.borrowings.index')
-                ->with('success', 'Booking berhasil dikonversi menjadi peminjaman.');
+                ->with('success', 'Booking berhasil dikonversi menjadi peminjaman untuk eksemplar: ' . $bookCopy->copy_code);
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error("Error converting Booking ID: {$booking->id} - " . $e->getMessage());

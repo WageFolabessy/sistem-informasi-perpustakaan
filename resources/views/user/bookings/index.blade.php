@@ -8,7 +8,6 @@
     @include('admin.components.flash_messages')
     @include('admin.components.validation_errors')
 
-
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 fw-bold text-primary"><i class="bi bi-journal-bookmark-fill me-2"></i>Booking Aktif</h6>
@@ -33,7 +32,9 @@
                                             class="text-decoration-none text-dark fw-semibold d-block">
                                             {{ $booking->book?->title ?? 'Judul Tidak Diketahui' }}
                                         </a>
-                                        <small class="text-muted">ID Booking: {{ $booking->id }}</small>
+                                        <small class="text-muted">Eksemplar: {{ $booking->bookCopy?->copy_code ?? 'N/A' }}
+                                            (ID Booking: {{ $booking->id }})
+                                        </small>
                                     </div>
                                 </div>
                                 <div class="col-lg-5 col-md-6">
@@ -83,7 +84,7 @@
                                 <th scope="col">Tgl Booking</th>
                                 <th scope="col">Tgl Kadaluarsa</th>
                                 <th scope="col" class="text-center">Status Akhir</th>
-                                <th scope="col">Catatan</th>
+                                <th scope="col">Catatan</th> {{-- Tetap tampilkan kolom --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -108,6 +109,14 @@
                                     <td>
                                         <span
                                             title="{{ $booking->notes }}">{{ Str::limit($booking->notes, 50, '...') }}</span>
+                                        @if (!empty($booking->notes))
+                                            <button type="button" class="btn btn-xs btn-outline-secondary ms-1"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#bookingNotesModal-{{ $booking->id }}"
+                                                title="Lihat Catatan Lengkap">
+                                                <i class="bi bi-chat-left-text"></i>
+                                            </button>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach
@@ -115,8 +124,19 @@
                     </table>
                 </div>
 
-                <div class="mt-3 d-flex justify-content-center">
-                    {{ $pastBookings->links() }}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        @if ($pastBookings->total() > 0)
+                            <small class="text-muted">
+                                Menampilkan {{ $pastBookings->firstItem() }}
+                                hingga {{ $pastBookings->lastItem() }}
+                                dari {{ $pastBookings->total() }} riwayat
+                            </small>
+                        @endif
+                    </div>
+                    <div>
+                        {{ $pastBookings->links('vendor.pagination.bootstrap-5') }}
+                    </div>
                 </div>
             @endif
         </div>
@@ -150,9 +170,51 @@
         </div>
     @endforeach
 
+    @foreach ($pastBookings as $booking)
+        @if (!empty($booking->notes))
+            <div class="modal fade" id="bookingNotesModal-{{ $booking->id }}" tabindex="-1"
+                aria-labelledby="bookingNotesModalLabel-{{ $booking->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="bookingNotesModalLabel-{{ $booking->id }}">
+                                <i class="bi bi-chat-left-text me-2"></i>Catatan Booking
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Buku:</strong> {{ $booking->book?->title ?? 'N/A' }}</p>
+                            <p><strong>Status Akhir:</strong>
+                                @if ($booking->status)
+                                    <span
+                                        class="badge bg-{{ $booking->status->badgeColor() }}">{{ $booking->status->label() }}</span>
+                                @else
+                                    -
+                                @endif
+                            </p>
+                            <hr>
+                            <p><strong>Catatan:</strong></p>
+                            <p style="white-space: pre-wrap;">{!! nl2br(e($booking->notes)) !!}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endforeach
+
 @endsection
 
 @section('css')
+    <style>
+        .btn-xs {
+            --bs-btn-padding-y: .1rem;
+            --bs-btn-padding-x: .3rem;
+            --bs-btn-font-size: .75rem;
+        }
+    </style>
 @endsection
 
 @section('script')

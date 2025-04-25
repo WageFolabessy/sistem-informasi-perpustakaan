@@ -38,6 +38,11 @@ class Booking extends Model
         return $this->belongsTo(Book::class);
     }
 
+    public function bookCopy(): BelongsTo
+    {
+        return $this->belongsTo(BookCopy::class, 'book_copy_id');
+    }
+
     public function borrowing(): HasOne
     {
         return $this->hasOne(Borrowing::class);

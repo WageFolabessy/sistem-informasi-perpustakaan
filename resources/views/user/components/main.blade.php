@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{ config('app.name', 'SIMPerpus') }} - @yield('title', 'Selamat Datang')</title>
     <meta name="description" content="Sistem Informasi Perpustakaan SMK" />
-    <meta name="author" content="SMK [Nama Sekolah Anda]" />
+    <meta name="author" content="SMKN 1 Sanggau Ledo" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/png" href="{{ asset('assets/images/logo.png') }}" />
 

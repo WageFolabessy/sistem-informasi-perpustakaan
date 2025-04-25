@@ -77,7 +77,7 @@
                                 <th scope="col">Tgl Pinjam</th>
                                 <th scope="col">Tgl Kembali</th>
                                 <th scope="col" class="text-center">Status Akhir</th>
-                                <th scope="col" class="text-center">Denda</th>
+                                <th scope="col" class="text-center">Denda & Catatan</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -105,7 +105,19 @@
                                             Rp {{ number_format($borrowing->fine->amount, 0, ',', '.') }}
                                             <span
                                                 class="ms-1 badge bg-{{ $borrowing->fine->status->badgeColor() }}">{{ $borrowing->fine->status->label() }}</span>
-                                            <a href="#" class="ms-1"><i class="bi bi-eye"></i></a>
+
+                                            @if (!empty($borrowing->fine->notes))
+                                                <button type="button" class="btn btn-xs btn-outline-secondary ms-1"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#notesModal-{{ $borrowing->fine->id }}"
+                                                    title="Lihat Catatan Denda">
+                                                    <i class="bi bi-chat-left-text"></i>
+                                                </button>
+                                            @endif
+                                            @if ($borrowing->fine->status == App\Enum\FineStatus::Unpaid)
+                                                <a href="#" class="btn btn-xs btn-warning ms-1"
+                                                    title="Lihat Detail Denda"><i class="bi bi-cash-coin"></i></a>
+                                            @endif
                                         @else
                                             -
                                         @endif
@@ -116,16 +128,65 @@
                     </table>
                 </div>
 
-                <div class="mt-3 d-flex justify-content-center">
-                    {{ $pastBorrowings->links() }}
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div>
+                        @if ($pastBorrowings->total() > 0)
+                            <small class="text-muted">
+                                Menampilkan {{ $pastBorrowings->firstItem() }}
+                                hingga {{ $pastBorrowings->lastItem() }}
+                                dari {{ $pastBorrowings->total() }} riwayat
+                            </small>
+                        @endif
+                    </div>
+                    <div>
+                        {{ $pastBorrowings->links('vendor.pagination.bootstrap-5') }}
+                    </div>
                 </div>
             @endif
         </div>
     </div>
 
+    @foreach ($pastBorrowings as $borrowing)
+        @if ($borrowing->fine && !empty($borrowing->fine->notes))
+            <div class="modal fade" id="notesModal-{{ $borrowing->fine->id }}" tabindex="-1"
+                aria-labelledby="notesModalLabel-{{ $borrowing->fine->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="notesModalLabel-{{ $borrowing->fine->id }}">
+                                <i class="bi bi-chat-left-text me-2"></i>Catatan Denda
+                            </h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Buku:</strong> {{ $borrowing->bookCopy?->book?->title ?? 'N/A' }}
+                                ({{ $borrowing->bookCopy?->copy_code ?? 'N/A' }})
+                            </p>
+                            <p><strong>Jumlah Denda:</strong> Rp {{ number_format($borrowing->fine->amount, 0, ',', '.') }}
+                            </p>
+                            <hr>
+                            <p><strong>Catatan:</strong></p>
+                            <p style="white-space: pre-wrap;">{!! nl2br(e($borrowing->fine->notes)) !!}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endforeach
+
 @endsection
 
 @section('css')
+    <style>
+        .btn-xs {
+            --bs-btn-padding-y: .1rem;
+            --bs-btn-padding-x: .3rem;
+            --bs-btn-font-size: .75rem;
+        }
+    </style>
 @endsection
 
 @section('script')

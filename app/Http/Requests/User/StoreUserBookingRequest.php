@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Enum\BookingStatus;
 use App\Enum\BorrowingStatus;
-use App\Enum\BookCopyStatus;
 use Illuminate\Validation\Validator;
 
 class StoreUserBookingRequest extends FormRequest
@@ -18,9 +17,7 @@ class StoreUserBookingRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            //
-        ];
+        return [];
     }
 
     public function withValidator(Validator $validator): void
@@ -32,11 +29,6 @@ class StoreUserBookingRequest extends FormRequest
             if (!$user || !$book) {
                 $validator->errors()->add('general', 'Data pengguna atau buku tidak valid.');
                 return;
-            }
-
-            $hasAvailableCopy = $book->copies()->where('status', BookCopyStatus::Available)->exists();
-            if (!$hasAvailableCopy) {
-                $validator->errors()->add('unavailable', 'Maaf, saat ini tidak ada eksemplar yang tersedia untuk dibooking.');
             }
 
             $maxBookings = (int) setting('max_active_bookings', 2);
@@ -62,10 +54,6 @@ class StoreUserBookingRequest extends FormRequest
             if ($hasActiveLoanForThisBook) {
                 $validator->errors()->add('duplicate_loan', 'Anda sedang meminjam buku ini, tidak bisa melakukan booking.');
             }
-
-            if ($book->copies()->count() === 0) {
-                $validator->errors()->add('no_copies', 'Saat ini tidak ada eksemplar terdaftar untuk buku ini.');
-            }
         });
     }
 
@@ -73,11 +61,9 @@ class StoreUserBookingRequest extends FormRequest
     {
         return [
             'general.required' => 'Data pengguna atau buku tidak valid.',
-            'unavailable.required' => 'Maaf, saat ini tidak ada eksemplar yang tersedia untuk dibooking.',
             'limit.required' => 'Anda sudah mencapai batas maksimal booking aktif.',
             'duplicate_booking.required' => 'Anda sudah memiliki booking aktif untuk buku ini.',
             'duplicate_loan.required' => 'Anda sedang meminjam buku ini, tidak bisa melakukan booking.',
-            'no_copies.required' => 'Saat ini tidak ada eksemplar terdaftar untuk buku ini.',
         ];
     }
 }

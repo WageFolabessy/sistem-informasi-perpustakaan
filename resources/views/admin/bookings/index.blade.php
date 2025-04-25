@@ -99,55 +99,32 @@
                                                 aria-label="Close"></button>
                                         </div>
                                         <div class="modal-body">
-                                            <p>Pilih eksemplar yang akan dipinjamkan untuk booking:</p>
+                                            <p>Anda akan mengonversi booking ini menjadi peminjaman:</p>
                                             <ul>
                                                 <li>Buku: <strong>{{ $booking->book?->title ?? 'N/A' }}</strong></li>
                                                 <li>Pemesan: <strong>{{ $booking->siteUser?->name ?? 'N/A' }}</strong></li>
+                                                <li>Eksemplar:
+                                                    <strong>{{ $booking->bookCopy?->copy_code ?? 'N/A (Harap Cek!)' }}</strong>
+                                                </li>
                                             </ul>
-                                            <div class="mb-3">
-                                                <label for="book_copy_id-{{ $booking->id }}" class="form-label">Pilih Kode
-                                                    Eksemplar Tersedia <span class="text-danger">*</span></label>
-                                                <select class="form-select @error('book_copy_id') is-invalid @enderror"
-                                                    id="book_copy_id-{{ $booking->id }}" name="book_copy_id" required>
-                                                    <option value="">-- Pilih Eksemplar --</option>
-                                                    @php
-                                                        $availableCopiesForModal = \App\Models\BookCopy::where(
-                                                            'book_id',
-                                                            $booking->book_id,
-                                                        )
-                                                            ->where('status', \App\Enum\BookCopyStatus::Available)
-                                                            ->orderBy('copy_code')
-                                                            ->get(['id', 'copy_code']);
-                                                    @endphp
-                                                    @forelse ($availableCopiesForModal as $copy)
-                                                        <option value="{{ $copy->id }}">{{ $copy->copy_code }}
-                                                        </option>
-                                                    @empty
-                                                        <option value="" disabled>Tidak ada eksemplar tersedia
-                                                        </option>
-                                                    @endforelse
-                                                </select>
-                                                @error('book_copy_id')
-                                                    <div class="invalid-feedback d-block">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+
+                                            {{-- Opsional: Tambahkan Textarea Notes Admin --}}
                                             <div class="mb-3">
                                                 <label for="admin_notes-convert-{{ $booking->id }}"
                                                     class="form-label">Catatan Konversi (Opsional):</label>
-                                                <textarea class="form-control @error('admin_notes') is-invalid @enderror" id="admin_notes-convert-{{ $booking->id }}"
-                                                    name="admin_notes" rows="2">{{ old('admin_notes') }}</textarea>
-                                                @error('admin_notes')
+                                                <textarea class="form-control @error('admin_notes', 'convert_' . $booking->id) is-invalid @enderror"
+                                                    id="admin_notes-convert-{{ $booking->id }}" name="admin_notes" rows="2">{{ old('admin_notes') }}</textarea>
+                                                @error('admin_notes', 'convert_' . $booking->id)
                                                     <div class="invalid-feedback d-block">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <p><small>Pastikan Anda memberikan eksemplar yang sesuai kepada siswa.</small>
+                                            <p><small>Pastikan Anda memberikan eksemplar yang benar kepada siswa.</small>
                                             </p>
                                         </div>
                                         <div class="modal-footer">
                                             <button type="button" class="btn btn-secondary"
                                                 data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-primary"
-                                                {{ $availableCopiesForModal->isEmpty() ? 'disabled' : '' }}>
+                                            <button type="submit" class="btn btn-primary">
                                                 <i class="bi bi-check2-square me-1"></i> Konversi Jadi Peminjaman
                                             </button>
                                         </div>

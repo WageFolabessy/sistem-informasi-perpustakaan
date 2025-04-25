@@ -23,6 +23,7 @@ use App\Http\Controllers\User\DashboardController as UserDashboardController;
 use App\Http\Controllers\User\BookController as UserBookController;
 use App\Http\Controllers\User\BorrowingController as UserBorrowingController;
 use App\Http\Controllers\User\BookingController as UserBookingController;
+use App\Http\Controllers\User\FineController as UserFineController;
 
 
 // Rute Autentikasi Admin
@@ -144,6 +145,8 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/booking-saya', [UserBookingController::class, 'index'])->name('user.bookings.index');
     Route::post('/booking/{book}', [UserBookingController::class, 'store'])->name('user.bookings.store');
     Route::delete('/booking-saya/{booking}/cancel', [UserBookingController::class, 'cancel'])->name('user.bookings.cancel');
+
+    Route::get('/denda-saya', [UserFineController::class, 'index'])->name('user.fines.index');
 });
 Route::get('/katalog', [UserBookController::class, 'index'])->name('catalog.index');
 Route::get('/katalog/search', [UserBookController::class, 'searchApi'])->name('catalog.search.api');

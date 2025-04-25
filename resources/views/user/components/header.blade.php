@@ -59,8 +59,9 @@
                             <li><a class="dropdown-item {{-- Request::is('profil*') ? 'active' : '' --}}" href="#">
                                     <i class="bi bi-person-lines-fill"></i> Profil Saya</a>
                             </li>
-                            <li><a class="dropdown-item {{-- Request::is('denda*') ? 'active' : '' --}}" href="#">
-                                    <i class="bi bi-cash-coin"></i> Denda Saya</a>
+                            <li><a class="dropdown-item {{ Route::is('user.fines.index') ? 'active' : '' }}"
+                                    href="{{ route('user.fines.index') }}">
+                                    <i class="bi bi-cash-coin me-2"></i> Denda Saya</a>
                             </li>
                             <li>
                                 <hr class="dropdown-divider">

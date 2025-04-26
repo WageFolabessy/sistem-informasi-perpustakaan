@@ -218,11 +218,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (Notification.permission === "granted") {
                     enableButton.disabled = true;
                     enableButton.innerText = "Notifikasi Sudah Aktif";
+                } else if (Notification.permission === "default") {
+                    console.log(
+                        "[FCM] Permission is default. Requesting permission automatically..."
+                    );
+                    requestNotificationPermission();
                 } else if (Notification.permission === "denied") {
                     enableButton.disabled = true;
                     enableButton.innerText = "Notifikasi Diblokir";
                     enableButton.title =
                         "Izin notifikasi diblokir di pengaturan browser.";
+                    requestNotificationPermission();
                 } else {
                     enableButton.disabled = false;
                     enableButton.innerText = "Aktifkan Notifikasi Browser";

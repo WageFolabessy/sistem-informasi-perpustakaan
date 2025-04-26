@@ -77,9 +77,9 @@ self.addEventListener("notificationclick", function (event) {
                         return client.focus();
                     }
                 }
-                if (clients.openWindow) {
+                if (client.openWindow) {
                     console.log("[SW] Opening new window for:", targetUrl);
-                    return clients.openWindow(targetUrl);
+                    return client.openWindow(targetUrl);
                 }
             })
     );

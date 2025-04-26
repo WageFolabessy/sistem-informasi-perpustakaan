@@ -6,8 +6,12 @@ use App\Models\AdminUser;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\BookCopy;
+use App\Models\Borrowing;
 use App\Models\Category;
 use App\Models\Publisher;
+use App\Models\SiteUser;
+use Database\Factories\BookCopyFactory;
+use Database\Factories\BorrowingFactory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Schema;
 
@@ -30,6 +34,8 @@ class DatabaseSeeder extends Seeder
         Schema::enableForeignKeyConstraints();
 
         AdminUser::factory(1)->create();
+        SiteUser::factory(2)->create();
+
         $this->call([
             CategorySeeder::class,
             AuthorSeeder::class,
@@ -38,5 +44,7 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             BookingSeeder::class,
         ]);
+
+        $this->command->info('Database seeding completed successfully.');
     }
 }

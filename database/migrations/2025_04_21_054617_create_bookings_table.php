@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('site_user_id')->constrained('site_users')->onDelete('restrict')->onUpdate('cascade');
             $table->foreignId('book_id')->constrained('books')->onDelete('restrict')->onUpdate('cascade');
+            $table->foreignId('book_copy_id')->nullable()->constrained('book_copies')->nullOnDelete();
             $table->timestamp('booking_date')->useCurrent();
             $table->timestamp('expiry_date')->index();
             $table->enum('status', ['Active', 'Expired', 'ConvertedToLoan', 'Cancelled'])->default('Active')->index();
@@ -32,13 +33,20 @@ return new class extends Migration
             if (Schema::hasColumn('bookings', 'site_user_id')) {
                 try {
                     $table->dropForeign(['site_user_id']);
-                } catch (\Exception $e) { /* ignore */ }
+                } catch (\Exception $e) { /* ignore */
+                }
             }
             if (Schema::hasColumn('bookings', 'book_id')) {
                 try {
                     $table->dropForeign(['book_id']);
-                } catch (\Exception $e) { /* ignore */ }
+                } catch (\Exception $e) { /* ignore */
+                }
             }
+            try {
+                $table->dropForeign(['book_copy_id']);
+            } catch (\Exception $e) {
+            }
+            $table->dropColumn('book_copy_id');
         });
         Schema::dropIfExists('bookings');
     }

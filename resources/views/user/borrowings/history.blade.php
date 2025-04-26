@@ -57,7 +57,8 @@
                                         @if ($borrowing->lost_report_exists)
                                             <span class="text-muted fst-italic"
                                                 title="Laporan kehilangan untuk buku ini sudah dibuat.">
-                                                <i class="bi bi-check-circle-fill text-success me-1"></i> Sudah Dilaporkan Hilang
+                                                <i class="bi bi-check-circle-fill text-success me-1"></i> Sudah Dilaporkan
+                                                Hilang
                                             </span>
                                         @else
                                             <button type="button" class="btn btn-outline-danger btn-sm"
@@ -191,42 +192,46 @@
     @endforeach
 
     @foreach ($activeBorrowings as $borrowing)
-        <div class="modal fade" id="reportLostModal-{{ $borrowing->id }}" tabindex="-1"
-            aria-labelledby="reportLostModalLabel-{{ $borrowing->id }}" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <form action="{{ route('user.borrowings.report-lost', $borrowing) }}" method="POST">
-                    @csrf
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="reportLostModalLabel-{{ $borrowing->id }}">
-                                <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Konfirmasi Laporan
-                                Kehilangan
-                            </h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
+        @if (!$borrowing->lost_report_exists)
+            <div class="modal fade" id="reportLostModal-{{ $borrowing->id }}" tabindex="-1"
+                aria-labelledby="reportLostModalLabel-{{ $borrowing->id }}" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <form action="{{ route('user.borrowings.report-lost', $borrowing) }}" method="POST">
+                        @csrf
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="reportLostModalLabel-{{ $borrowing->id }}">
+                                    <i class="bi bi-exclamation-triangle-fill text-danger me-2"></i>Konfirmasi Laporan
+                                    Kehilangan
+                                </h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Apakah Anda yakin ingin melaporkan buku berikut sebagai **hilang**?</p>
+                                <ul>
+                                    <li>Judul: <strong>{{ $borrowing->bookCopy?->book?->title ?? 'N/A' }}</strong></li>
+                                    <li>Kode Eksemplar: <strong>{{ $borrowing->bookCopy?->copy_code ?? 'N/A' }}</strong>
+                                    </li>
+                                    <li>Dipinjam Tanggal:
+                                        <strong>{{ $borrowing->borrow_date?->isoFormat('D MMM YYYY') ?? '-' }}</strong>
+                                    </li>
+                                </ul>
+                                <p class="text-danger small">
+                                    Melaporkan buku hilang akan diteruskan ke petugas perpustakaan untuk diproses lebih
+                                    lanjut.
+                                    Mungkin akan ada konsekuensi denda penggantian sesuai aturan yang berlaku.
+                                </p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-danger">Ya, Laporkan Hilang</button>
+                            </div>
                         </div>
-                        <div class="modal-body">
-                            <p>Apakah Anda yakin ingin melaporkan buku berikut sebagai **hilang**?</p>
-                            <ul>
-                                <li>Judul: <strong>{{ $borrowing->bookCopy?->book?->title ?? 'N/A' }}</strong></li>
-                                <li>Kode Eksemplar: <strong>{{ $borrowing->bookCopy?->copy_code ?? 'N/A' }}</strong></li>
-                                <li>Dipinjam Tanggal:
-                                    <strong>{{ $borrowing->borrow_date?->isoFormat('D MMM YYYY') ?? '-' }}</strong>
-                                </li>
-                            </ul>
-                            <p class="text-danger small">
-                                Melaporkan buku hilang akan diteruskan ke petugas perpustakaan untuk diproses lebih lanjut.
-                                Mungkin akan ada konsekuensi denda penggantian sesuai aturan yang berlaku.
-                            </p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-danger">Ya, Laporkan Hilang</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
+        @endif
     @endforeach
 
 @endsection

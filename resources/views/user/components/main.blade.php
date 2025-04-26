@@ -33,7 +33,14 @@
 
     <script src="{{ asset('assets/admin/vendor/jquery-3.7.0.min.js') }}"></script>
     <script src="{{ asset('assets/admin/vendor/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('assets/user/js/custom-user.js') }}"></script>
+
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js"></script>
+    <script type="module" src="https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging.js"></script>
+
+    <script>
+        window.fcmTokenStoreUrl = "{{ route('user.fcm-token.store') }}";
+    </script>
+    <script type="module" src="{{ asset('assets/user/js/custom-user.js') }}"></script>
 
     @yield('script')
 

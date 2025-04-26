@@ -1,37 +1,86 @@
-// Import Firebase SDK scripts (sesuaikan versi jika perlu)
 importScripts(
-    "https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"
+    "https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"
 );
 importScripts(
-    "https://www.gstatic.com/firebasejs/9.15.0/firebase-messaging-compat.js"
+    "https://www.gstatic.com/firebasejs/11.6.1/firebase-messaging-compat.js"
 );
 
-console.log("[SW] Script Awal Berjalan!");
+console.log("[SW] Service Worker Compat Berjalan!");
 
-// !!! GANTI DENGAN KONFIGURASI FIREBASE ANDA DARI LANGKAH 1.2 !!!
 const firebaseConfig = {
     apiKey: "AIzaSyBsertCHkfWi2EjNmJcgVVLyfNKQ4nosnw",
     authDomain: "sistem-informasi-perpust-43e3d.firebaseapp.com",
     projectId: "sistem-informasi-perpust-43e3d",
-    storageBucket: "sistem-informasi-perpust-43e3d.firebasestorage.app",
+    storageBucket: "sistem-informasi-perpust-43e3d.appspot.com",
     messagingSenderId: "695734632799",
     appId: "1:695734632799:web:3c4825f2b7b101ad1876ea",
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
 const messaging = firebase.messaging();
 
-// Opsional: Handle notifikasi saat aplikasi di background
-// Komentari atau hapus bagian self.addEventListener('push', ...);
-// Aktifkan kembali atau tulis ulang bagian ini:
 messaging.onBackgroundMessage((payload) => {
-    console.log("[SW] Pesan background diterima (via Firebase):", payload);
-    const notificationTitle = payload.notification?.title || "Notifikasi Baru";
+    console.log("[SW] Pesan background diterima (Compat):", payload);
+
+    const notificationTitle =
+        payload.notification?.title ??
+        payload.data?.title ??
+        "Notifikasi SIMPerpus";
     const notificationOptions = {
-        body: payload.notification?.body || "Anda dapat pesan baru.",
-        icon: payload.notification?.icon || "/images/logo.png", // Sesuaikan path icon default
-        // Anda juga bisa menggunakan payload.data di sini
+        body:
+            payload.notification?.body ??
+            payload.data?.body ??
+            "Anda memiliki pemberitahuan baru.",
+        icon:
+            payload.notification?.icon ??
+            payload.data?.icon ??
+            "/assets/images/logo.png",
+        data: payload.data ?? {},
     };
-    self.registration.showNotification(notificationTitle, notificationOptions);
+
+    self.registration
+        .showNotification(notificationTitle, notificationOptions)
+        .catch((err) =>
+            console.error("[SW] Error showing notification: ", err)
+        );
+});
+
+console.log("Firebase Messaging Service Worker (Compat) Initialized");
+
+self.addEventListener("notificationclick", function (event) {
+    console.log("[SW] On notification click: ", event.notification);
+    event.notification.close();
+
+    const targetUrl = event.notification.data?.click_action || "/riwayat-pinjam";
+
+    event.waitUntil(
+        clients
+            .matchAll({
+                type: "window",
+                includeUncontrolled: true,
+            })
+            .then(function (clientList) {
+                for (var i = 0; i < clientList.length; i++) {
+                    var client = clientList[i];
+                    let clientUrl = new URL(client.url);
+                    let targetPath = new URL(targetUrl, self.location.origin)
+                        .pathname;
+                    if (
+                        clientUrl.pathname === targetPath &&
+                        "focus" in client
+                    ) {
+                        console.log(
+                            "[SW] Focusing existing client for:",
+                            targetPath
+                        );
+                        return client.focus();
+                    }
+                }
+                if (clients.openWindow) {
+                    console.log("[SW] Opening new window for:", targetUrl);
+                    return clients.openWindow(targetUrl);
+                }
+            })
+    );
 });

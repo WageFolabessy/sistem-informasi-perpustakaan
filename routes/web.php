@@ -1,6 +1,7 @@
 <?php
 
 // --- Admin ---
+use App\Http\Controllers\User\FcmController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminUserController;
 use App\Http\Controllers\Admin\AuthorController;
@@ -164,6 +165,8 @@ Route::middleware('auth:web')->group(function () {
     Route::get('/notifikasi', [UserNotificationController::class, 'index'])->name('user.notifications.index');
     Route::patch('/notifikasi/{notificationId}/read', [UserNotificationController::class, 'markAsRead'])->name('user.notifications.read');
     Route::post('/notifikasi/read-all', [UserNotificationController::class, 'markAllAsRead'])->name('user.notifications.readall');
+
+    Route::post('/fcm-token', [FcmController::class, 'store'])->name('user.fcm-token.store');
 });
 
 // --- Katalog Buku ---

@@ -2,6 +2,7 @@
 
 use App\Console\Commands\ExpireBookings;
 use App\Console\Commands\ProcessExpiredBookings;
+use App\Console\Commands\SendBookingReminders;
 use App\Console\Commands\SendBorrowingReminders;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -20,4 +21,8 @@ Schedule::command(ProcessExpiredBookings::class)->hourly()
 
 Schedule::command(SendBorrowingReminders::class)->dailyAt('08:00')
     ->name('send-borrowing-reminders')
+    ->withoutOverlapping();
+
+Schedule::command(SendBookingReminders::class)->dailyAt('09:00')
+    ->name('send-booking-reminders')
     ->withoutOverlapping();

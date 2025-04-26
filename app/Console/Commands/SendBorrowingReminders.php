@@ -10,6 +10,7 @@ use App\Notifications\BorrowingOverdueNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\SiteUser;
 
 class SendBorrowingReminders extends Command
 {
@@ -20,10 +21,11 @@ class SendBorrowingReminders extends Command
     {
         $this->info('Memulai pengecekan peminjaman...');
         $today = Carbon::today();
-        $tomorrow = Carbon::tomorrow(); 
+        $tomorrow = Carbon::tomorrow();
 
         $dueSoonBorrowings = Borrowing::where('status', BorrowingStatus::Borrowed)
             ->whereDate('due_date', $tomorrow)
+            ->whereHas('siteUser', fn($q) => $q->where('is_active', true))
             ->with('siteUser')
             ->get();
 
@@ -31,10 +33,8 @@ class SendBorrowingReminders extends Command
             $this->info("Mengirim {$dueSoonBorrowings->count()} notifikasi jatuh tempo besok...");
             foreach ($dueSoonBorrowings as $borrowing) {
                 try {
-                    if ($borrowing->siteUser) {
-                        $borrowing->siteUser->notify(new BorrowingDueSoonNotification($borrowing));
-                        $this->line("- Notif jatuh tempo dikirim ke User ID: {$borrowing->siteUser->id} untuk Borrowing ID: {$borrowing->id}");
-                    }
+                    $borrowing->siteUser->notify(new BorrowingDueSoonNotification($borrowing));
+                    $this->line("- Notif jatuh tempo dikirim ke User ID: {$borrowing->siteUser->id} untuk Borrowing ID: {$borrowing->id}");
                 } catch (\Exception $e) {
                     Log::error("Failed sending DueSoon notification for Borrowing ID {$borrowing->id}: " . $e->getMessage());
                     $this->error("Gagal kirim notif DueSoon untuk Borrowing ID {$borrowing->id}.");
@@ -47,6 +47,7 @@ class SendBorrowingReminders extends Command
 
         $newlyOverdueBorrowings = Borrowing::where('status', BorrowingStatus::Borrowed)
             ->whereDate('due_date', '<', $today)
+            ->whereHas('siteUser', fn($q) => $q->where('is_active', true))
             ->with('siteUser')
             ->get();
 
@@ -58,10 +59,9 @@ class SendBorrowingReminders extends Command
                     $borrowing->status = BorrowingStatus::Overdue;
                     $borrowing->save();
 
-                    if ($borrowing->siteUser) {
-                        $borrowing->siteUser->notify(new BorrowingOverdueNotification($borrowing)); // Kirim Notif Overdue
-                        $this->line("- Status Borrowing ID {$borrowing->id} diupdate ke Overdue & notif dikirim ke User ID: {$borrowing->siteUser->id}");
-                    }
+                    $borrowing->siteUser->notify(new BorrowingOverdueNotification($borrowing));
+                    $this->line("- Status Borrowing ID {$borrowing->id} diupdate ke Overdue & notif dikirim ke User ID: {$borrowing->siteUser->id}");
+
                     DB::commit();
                 } catch (\Exception $e) {
                     DB::rollBack();

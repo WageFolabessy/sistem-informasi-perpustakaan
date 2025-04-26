@@ -16,6 +16,12 @@
 
                 @auth('web')
                     <li class="nav-item">
+                        <a class="nav-link {{ Route::is('dashboard') ? 'active' : '' }}"
+                            href="{{ route('dashboard') }}">
+                            <i class="bi bi-house me-1"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link {{ Route::is('catalog.*') ? 'active' : '' }}"
                             href="{{ route('catalog.index') }}">
                             <i class="bi bi-search me-1"></i> Katalog Buku
@@ -38,7 +44,7 @@
 
                     <li class="nav-item dropdown">
                         @php
-                            $unreadNotifications = Auth::user()->unreadNotifications()->take(5)->get(); // Ambil 5 terbaru yg belum dibaca
+                            $unreadNotifications = Auth::user()->unreadNotifications()->take(5)->get();
                             $unreadCount = Auth::user()->unreadNotifications()->count();
                         @endphp
                         <a class="nav-link" href="#" id="notificationDropdown" role="button"
@@ -52,7 +58,7 @@
                                         <span class="visually-hidden">unread messages</span>
                                     </span>
                                 @endif
-                            </i>
+                            </i> <span>Notifikasi</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="notificationDropdown">
                             <li class="dropdown-header text-center fw-bold">Notifikasi Belum Dibaca</li>
@@ -100,7 +106,7 @@
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="bi bi-person-circle fs-4 me-1"></i>
-                            <span class="d-none d-lg-inline">{{ Auth::user()->name }}</span>
+                            <span class="d-lg-inline">{{ Auth::user()->name }}</span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                             <li><a class="dropdown-item {{ Route::is('user.profile.edit') ? 'active' : '' }}"

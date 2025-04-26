@@ -54,7 +54,7 @@
                                 @endif
                             </i>
                         </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                        <ul class="dropdown-menu dropdown-menu-lg-end" aria-labelledby="notificationDropdown">
                             <li class="dropdown-header text-center fw-bold">Notifikasi Belum Dibaca</li>
                             <li>
                                 <hr class="dropdown-divider">

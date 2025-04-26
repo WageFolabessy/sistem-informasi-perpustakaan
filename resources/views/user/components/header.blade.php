@@ -16,8 +16,7 @@
 
                 @auth('web')
                     <li class="nav-item">
-                        <a class="nav-link {{ Route::is('dashboard') ? 'active' : '' }}"
-                            href="{{ route('dashboard') }}">
+                        <a class="nav-link {{ Route::is('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
                             <i class="bi bi-house me-1"></i> Dashboard
                         </a>
                     </li>
@@ -38,6 +37,12 @@
                             href="{{ route('user.bookings.index') }}">
                             <i class="bi bi-journal-bookmark-fill me-1"></i> Booking Saya
                         </a>
+                    </li>
+                    <li class="nav-item" id="fcm-button-container" style="display: none;">
+                        <button class="btn btn-outline-info btn-sm d-flex align-items-center" id="enable-fcm-button"
+                            type="button">
+                            <i class="bi bi-bell-slash me-1"></i> <span>Aktifkan Notifikasi Browser</span>
+                        </button>
                     </li>
 
                     <li class="nav-item d-none d-lg-block mx-2 border-end" style="height: 20px;"></li>

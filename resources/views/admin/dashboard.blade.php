@@ -7,80 +7,152 @@
     <div class="row">
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-start border-primary border-4 shadow h-100 py-2">
-                <a href="{{ route('admin.books.index') }}" class="text-decoration-none">
-                    <div class="card-body">
-                        <div class="row g-0 align-items-center">
-                            <div class="col">
-                                <div class="text-xs fw-bold text-primary text-uppercase mb-1">
-                                    Total Judul Buku</div>
-                                <div class="h5 mb-0 fw-bold text-primary">{{ $totalBooks }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-journal-richtext fs-2 text-primary"></i>
-                            </div>
+                <a href="{{ route('admin.books.index') }}" class="text-decoration-none stretched-link"
+                    title="Lihat Manajemen Buku"></a>
+                <div class="card-body">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-primary text-uppercase mb-1">
+                                Total Judul Buku</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">{{ number_format($totalBooks, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-journal-richtext fs-2 text-gray-300"></i>
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-start border-info border-4 shadow h-100 py-2">
-                <a href="{{ route('admin.books.index') }}" class="text-decoration-none">
-                    <div class="card-body">
-                        <div class="row g-0 align-items-center">
-                            <div class="col">
-                                <div class="text-xs fw-bold text-info text-uppercase mb-1">
-                                    Total Eksemplar</div>
-                                <div class="h5 mb-0 fw-bold text-info">{{ $totalCopies }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-book-fill fs-2 text-info"></i>
-                            </div>
+                <a href="{{ route('admin.books.index') }}" class="text-decoration-none stretched-link"
+                    title="Lihat Manajemen Buku"></a>
+                <div class="card-body">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-info text-uppercase mb-1">
+                                Total Eksemplar</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">{{ number_format($totalCopies, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-book-fill fs-2 text-gray-300"></i>
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card border-start border-success border-4 shadow h-100 py-2">
-                <a href="{{ route('admin.site-users.index') }}" class="text-decoration-none">
-                    <div class="card-body">
-                        <div class="row g-0 align-items-center">
-                            <div class="col">
-                                <div class="text-xs fw-bold text-success text-uppercase mb-1">
-                                    Siswa Aktif</div>
-                                <div class="h5 mb-0 fw-bold text-success">{{ $activeStudents }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-people-fill fs-2 text-success"></i>
+                <a href="{{ route('admin.site-users.index') }}" class="text-decoration-none stretched-link"
+                    title="Lihat Manajemen Siswa"></a>
+                <div class="card-body">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-success text-uppercase mb-1">
+                                Siswa Aktif</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">{{ number_format($activeStudents, 0, ',', '.') }}
                             </div>
                         </div>
+                        <div class="col-auto">
+                            <i class="bi bi-people-fill fs-2 text-gray-300"></i>
+                        </div>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
 
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-start border-warning border-4 shadow h-100 py-2">
-                <a href="{{ route('admin.borrowings.index') }}" class="text-decoration-none">
-                    <div class="card-body">
-                        <div class="row g-0 align-items-center">
-                            <div class="col">
-                                <div class="text-xs fw-bold text-warning text-uppercase mb-1">
-                                    Peminjaman Aktif</div>
-                                <div class="h5 mb-0 fw-bold text-warning">{{ $activeBorrowings }}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="bi bi-arrow-up-right-square-fill fs-2 text-warning"></i>
-                            </div>
+            <div class="card border-start border-primary border-4 shadow h-100 py-2">
+                <a href="{{ route('admin.borrowings.index') }}" class="text-decoration-none stretched-link"
+                    title="Lihat Manajemen Sirkulasi"></a>
+                <div class="card-body">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-primary text-uppercase mb-1">
+                                Peminjaman Aktif</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">
+                                {{ number_format($activeBorrowingsCount, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="bi bi-arrow-up-right-square-fill fs-2 text-gray-300"></i>
                         </div>
                     </div>
-                </a>
+                </div>
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-secondary border-4 shadow h-100 py-2">
+                <a href="{{ route('admin.site-users.pending') }}" class="text-decoration-none stretched-link"
+                    title="Lihat Registrasi Pending"></a>
+                <div class="card-body">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-secondary text-uppercase mb-1">Registrasi Pending</div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">
+                                {{ number_format($pendingRegistrationsCount, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="col-auto"><i class="bi bi-person-plus-fill fs-2 text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-danger border-4 shadow h-100 py-2">
+                <a href="{{ route('admin.borrowings.overdue') }}" class="text-decoration-none stretched-link"
+                    title="Lihat Buku Lewat Tempo"></a>
+                <div class="card-body">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-danger text-uppercase mb-1">Peminjaman Lewat Tempo</div>
+                            <div
+                                class="h5 mb-0 fw-bold {{ $overdueBorrowingsCount > 0 ? 'text-danger' : 'text-gray-800' }}">
+                                {{ number_format($overdueBorrowingsCount, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="col-auto"><i class="bi bi-calendar-x-fill fs-2 text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-warning border-4 shadow h-100 py-2">
+                <a href="{{ route('admin.lost-reports.index', ['status' => 'Reported']) }}"
+                    class="text-decoration-none stretched-link" title="Lihat Laporan Kehilangan Dilaporkan"></a>
+                <div class="card-body">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-warning text-uppercase mb-1">Laporan Kehilangan Dilaporkan
+                            </div>
+                            <div class="h5 mb-0 fw-bold text-gray-800">
+                                {{ number_format($pendingLostReportsCount, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="col-auto"><i class="bi bi-exclamation-triangle-fill fs-2 text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-start border-danger border-4 shadow h-100 py-2">
+                <a href="{{ route('admin.fines.index', ['status' => \App\Enum\FineStatus::Unpaid->value]) }}"
+                    class="text-decoration-none stretched-link" title="Lihat Denda Belum Dibayar"></a>
+                <div class="card-body">
+                    <div class="row g-0 align-items-center">
+                        <div class="col">
+                            <div class="text-xs fw-bold text-danger text-uppercase mb-1">Total Denda Belum Dibayar</div>
+                            <div class="h5 mb-0 fw-bold {{ $totalUnpaidFines > 0 ? 'text-danger' : 'text-gray-800' }}">Rp
+                                {{ number_format($totalUnpaidFines, 0, ',', '.') }}</div>
+                        </div>
+                        <div class="col-auto"><i class="bi bi-cash-coin fs-2 text-gray-300"></i></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="card shadow mb-4">
         <div class="card-header py-3">
@@ -102,8 +174,9 @@
                     </thead>
                     <tbody>
                         @forelse ($recentBorrowings as $borrowing)
-                            <tr>
-                                <td>{{ $borrowing->borrow_date?->isoFormat('D MMM YY, HH:mm') ?? '-' }}</td>
+                            <tr class="align-middle">
+                                <td>{{ $borrowing->borrow_date?->isoFormat('D MMM YY, HH:mm') ?? ($borrowing->created_at?->isoFormat('D MMM YY, HH:mm') ?? '-') }}
+                                </td>
                                 <td>{{ $borrowing->siteUser?->name ?? 'N/A' }}</td>
                                 <td>{{ $borrowing->bookCopy?->book?->title ?? 'N/A' }}</td>
                                 <td>{{ $borrowing->bookCopy?->copy_code ?? 'N/A' }}</td>
@@ -116,8 +189,8 @@
                                     @endif
                                 </td>
                                 <td class="text-center action-column">
-                                    <a href="{{ route('admin.borrowings.show', $borrowing) }}" class="btn btn-sm btn-info"
-                                        title="Lihat Detail Peminjaman">
+                                    <a href="{{ route('admin.borrowings.show', $borrowing) }}"
+                                        class="btn btn-sm btn-outline-info" title="Lihat Detail Peminjaman">
                                         <i class="bi bi-eye-fill"></i>
                                     </a>
                                 </td>

@@ -240,7 +240,7 @@
                                 <li>Pelapor: <strong>{{ $lost_report->reporter?->name ?? 'N/A' }}</strong></li>
                             </ul>
                             <p>Status buku akan diubah menjadi 'Hilang'. Jika terhubung dengan peminjaman dan ada biaya
-                                penggantian di setting, denda akan dibuat/diupdate.</p>
+                                penggantian di pengaturan sistem, denda akan dibuat/diupdate.</p>
                             <div class="mb-3">
                                 <label for="resolution_notes-show-{{ $lost_report->id }}" class="form-label">Catatan
                                     Penyelesaian <span class="text-danger">*</span></label>

@@ -13,17 +13,12 @@ class AdminUserFactory extends Factory
 {
     protected static ?string $password;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'nip' => "212102428",
-            'name' => "Endricho Folabessy",
-            'email' => "richolabessy@gmail.com",
+            'nip' => "123456",
+            'name' => "Admin",
+            'email' => "admin@admin.com",
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];

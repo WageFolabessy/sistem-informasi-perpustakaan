@@ -42,7 +42,7 @@ class DatabaseSeeder extends Seeder
             PublisherSeeder::class,
             BookSeeder::class,
             SettingSeeder::class,
-            BookingSeeder::class,
+            // BookingSeeder::class,
         ]);
 
         $this->command->info('Database seeding completed successfully.');

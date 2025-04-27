@@ -193,5 +193,8 @@
 @endsection
 
 @section('script')
-    @include('admin.components.datatable_script', ['table_id' => 'dataTableBookings'])
+    @include('admin.components.datatable_script', [
+        'table_id' => 'dataTableBookings',
+        // 'order_option' => [[3, 'desc']],
+    ])
 @endsection

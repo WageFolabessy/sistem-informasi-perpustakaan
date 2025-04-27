@@ -2,6 +2,7 @@
     $(document).ready(function() {
         var tableId = '#{{ $table_id ?? 'dataTable' }}';
         var table = $(tableId);
+        var defaultOrder = {!! isset($order_option) ? json_encode($order_option) : '[[0, "asc"]]' !!};
 
         if (table.length) {
             var tableBody = table.find('tbody');
@@ -15,6 +16,7 @@
                     lengthChange: true,
                     info: true,
                     responsive: true,
+                    order: defaultOrder,
                     language: {
                         url: '{{ asset('assets/admin/vendor/id.json') }}',
                         emptyTable: "Tidak ada data yang tersedia di tabel ini"

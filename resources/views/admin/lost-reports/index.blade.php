@@ -127,7 +127,7 @@
                                                 <li>Pelapor: <strong>{{ $report->reporter?->name ?? 'N/A' }}</strong></li>
                                             </ul>
                                             <p>Status buku akan diubah menjadi 'Hilang'. Jika terhubung dengan peminjaman
-                                                dan ada biaya penggantian di pengaturan sistem, denda akan dibuat/diupdate.</p>
+                                                dan ada biaya penggantian di pengaturan sistem, denda akan dibuat/diperbaharui.</p>
                                             <div class="mb-3">
                                                 <label for="resolution_notes-{{ $report->id }}"
                                                     class="form-label">Catatan Penyelesaian <span

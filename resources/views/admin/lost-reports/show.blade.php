@@ -57,7 +57,7 @@
                             @if ($lostBookFee > 0)
                                 Rp {{ number_format($lostBookFee, 0, ',', '.') }}
                                 <small class="text-muted d-block">(Tarif standar sesuai pengaturan sistem jika denda
-                                    diterapkan saat resolve)</small>
+                                    diterapkan saat penyelesaian)</small>
                             @else
                                 - <small class="text-muted d-block">(Tidak ada tarif denda buku hilang di
                                     pengaturan)</small>
@@ -240,7 +240,7 @@
                                 <li>Pelapor: <strong>{{ $lost_report->reporter?->name ?? 'N/A' }}</strong></li>
                             </ul>
                             <p>Status buku akan diubah menjadi 'Hilang'. Jika terhubung dengan peminjaman dan ada biaya
-                                penggantian di pengaturan sistem, denda akan dibuat/diupdate.</p>
+                                penggantian di pengaturan sistem, denda akan dibuat/diperbaharui.</p>
                             <div class="mb-3">
                                 <label for="resolution_notes-show-{{ $lost_report->id }}" class="form-label">Catatan
                                     Penyelesaian <span class="text-danger">*</span></label>

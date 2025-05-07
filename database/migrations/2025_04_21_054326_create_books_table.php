@@ -24,6 +24,8 @@ return new class extends Migration
             $table->string('location', 100)->nullable();
             $table->string('slug')->unique();
             $table->timestamps();
+
+            $table->fullText(['title', 'synopsis']);
         });
     }
 
@@ -33,6 +35,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('books', function (Blueprint $table) {
+            $table->dropFullText(['title', 'synopsis']);
+
             if (Schema::hasColumn('books', 'category_id')) { // Check if column exists
                 try {
                     $table->dropForeign(['category_id']);

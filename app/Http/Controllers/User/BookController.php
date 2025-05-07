@@ -20,22 +20,34 @@ class BookController extends Controller
         $searchQuery = $request->input('search');
         $categoryFilter = $request->input('category');
 
-        $booksQuery = Book::with(['author:id,name', 'category:id,name'])
-            ->select(['id', 'title', 'slug', 'author_id', 'category_id', 'cover_image', 'synopsis'])
-            ->orderBy('title', 'asc');
+        $booksQuery = Book::with(['author:id,name', 'category:id,name']);
 
         if ($searchQuery) {
+            $booksQuery->selectRaw(
+                "books.*, MATCH(title, synopsis) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance_score",
+                [$searchQuery]
+            );
+
+            // 2. Terapkan kondisi WHERE dengan FTS dan lainnya
             $booksQuery->where(function ($query) use ($searchQuery) {
-                $query->where('title', 'LIKE', "%{$searchQuery}%")
+                $query->whereFullText(['title', 'synopsis'], $searchQuery)
                     ->orWhere('isbn', 'LIKE', "%{$searchQuery}%")
+                    ->orWhereHas('category', function ($qCategory) use ($searchQuery) {
+                        $qCategory->where('name', 'LIKE', "%{$searchQuery}%");
+                    })
                     ->orWhereHas('author', function ($qAuthor) use ($searchQuery) {
                         $qAuthor->where('name', 'LIKE', "%{$searchQuery}%");
                     })
                     ->orWhereHas('publisher', function ($qPublisher) use ($searchQuery) {
                         $qPublisher->where('name', 'LIKE', "%{$searchQuery}%");
                     });
-                // ->orWhere('synopsis', 'LIKE', "%{$searchQuery}%");
             });
+
+            $booksQuery->orderByDesc('relevance_score')
+                ->orderBy('title', 'asc');
+        } else {
+            $booksQuery->select(['id', 'title', 'slug', 'author_id', 'category_id', 'cover_image', 'synopsis']);
+            $booksQuery->orderBy('title', 'asc');
         }
 
         if ($categoryFilter) {
@@ -113,14 +125,20 @@ class BookController extends Controller
     {
         $searchQuery = $request->input('search');
 
-        $booksQuery = Book::with(['author:id,name', 'category:id,name'])
-            ->select(['id', 'title', 'slug', 'author_id', 'category_id', 'cover_image', 'synopsis'])
-            ->orderBy('title', 'asc');
+        $booksQuery = Book::with(['author:id,name', 'category:id,name']);
 
         if ($searchQuery) {
+            $booksQuery->selectRaw(
+                "books.*, MATCH(title, synopsis) AGAINST(? IN NATURAL LANGUAGE MODE) as relevance_score",
+                [$searchQuery]
+            );
+
             $booksQuery->where(function ($query) use ($searchQuery) {
-                $query->where('title', 'LIKE', "%{$searchQuery}%")
+                $query->whereFullText(['title', 'synopsis'], $searchQuery)
                     ->orWhere('isbn', 'LIKE', "%{$searchQuery}%")
+                    ->orWhereHas('category', function ($qCategory) use ($searchQuery) {
+                        $qCategory->where('name', 'LIKE', "%{$searchQuery}%");
+                    })
                     ->orWhereHas('author', function ($qAuthor) use ($searchQuery) {
                         $qAuthor->where('name', 'LIKE', "%{$searchQuery}%");
                     })
@@ -128,12 +146,14 @@ class BookController extends Controller
                         $qPublisher->where('name', 'LIKE', "%{$searchQuery}%");
                     });
             });
+
+            $booksQuery->orderByDesc('relevance_score')
+                ->orderBy('title', 'asc');
         } else {
-            return response()->json(['html' => '<div class="col-12 text-center text-muted">Masukkan kata kunci pencarian.</div>']);
+            return response()->json(['html' => '<div class="col-12 text-center text-muted">Ketik minimal 3 karakter untuk memulai pencarian.</div>']);
         }
 
         $books = $booksQuery->take(12)->get();
-
         $html = view('user.books._book_list', compact('books'))->render();
 
         return response()->json(['html' => $html]);
